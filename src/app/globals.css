@@ -1,0 +1,165 @@
+@import "tailwindcss";
+
+:root {
+  --raw-white: 0 0% 100%;
+  --raw-black: 222 47% 4%;
+  --raw-ink-950: 224 39% 12%;
+  --raw-ink-900: 223 31% 16%;
+  --raw-ink-800: 221 24% 24%;
+  --raw-ink-700: 219 18% 38%;
+  --raw-ink-500: 218 16% 56%;
+  --raw-ink-300: 216 24% 87%;
+  --raw-ink-200: 214 32% 93%;
+  --raw-ink-100: 210 33% 97%;
+
+  --raw-primary: 195 85% 41%;
+  --raw-primary-strong: 196 88% 32%;
+  --raw-primary-soft: 193 82% 96%;
+  --raw-overview: 223 73% 56%;
+  --raw-dte: 191 87% 38%;
+  --raw-barber: 151 57% 36%;
+  --raw-erp: 24 88% 52%;
+  --raw-success: 147 58% 36%;
+  --raw-warning: 34 91% 47%;
+  --raw-danger: 0 76% 56%;
+
+  --bg-app: var(--raw-ink-100);
+  --bg-surface: var(--raw-white);
+  --bg-surface-muted: var(--raw-ink-100);
+  --bg-sidebar: var(--raw-ink-950);
+  --bg-sidebar-elevated: var(--raw-ink-900);
+  --bg-accent-soft: var(--raw-primary-soft);
+
+  --text-primary: var(--raw-ink-950);
+  --text-secondary: var(--raw-ink-800);
+  --text-muted: var(--raw-ink-500);
+  --text-inverse: var(--raw-white);
+
+  --border-default: var(--raw-ink-200);
+  --border-strong: var(--raw-ink-300);
+
+  --accent: var(--raw-primary);
+  --accent-strong: var(--raw-primary-strong);
+  --accent-soft: var(--raw-primary-soft);
+
+  --section-overview: var(--raw-overview);
+  --section-dte: var(--raw-dte);
+  --section-barber: var(--raw-barber);
+  --section-erp: var(--raw-erp);
+
+  --state-success: var(--raw-success);
+  --state-warning: var(--raw-warning);
+  --state-danger: var(--raw-danger);
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+
+  --shadow-soft: 0 18px 60px -35px hsl(var(--raw-black) / 0.22);
+  --shadow-card: 0 18px 34px -30px hsl(var(--raw-black) / 0.18);
+
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk", "Manrope", sans-serif;
+}
+
+@theme inline {
+  --color-bg-app: hsl(var(--bg-app));
+  --color-bg-surface: hsl(var(--bg-surface));
+  --color-bg-surface-muted: hsl(var(--bg-surface-muted));
+  --color-bg-sidebar: hsl(var(--bg-sidebar));
+  --color-bg-sidebar-elevated: hsl(var(--bg-sidebar-elevated));
+  --color-bg-accent-soft: hsl(var(--bg-accent-soft));
+  --color-text-primary: hsl(var(--text-primary));
+  --color-text-secondary: hsl(var(--text-secondary));
+  --color-text-muted: hsl(var(--text-muted));
+  --color-text-inverse: hsl(var(--text-inverse));
+  --color-border-default: hsl(var(--border-default));
+  --color-border-strong: hsl(var(--border-strong));
+  --color-accent: hsl(var(--accent));
+  --color-accent-strong: hsl(var(--accent-strong));
+  --color-accent-soft: hsl(var(--accent-soft));
+  --color-section-overview: hsl(var(--section-overview));
+  --color-section-dte: hsl(var(--section-dte));
+  --color-section-barber: hsl(var(--section-barber));
+  --color-section-erp: hsl(var(--section-erp));
+  --color-state-success: hsl(var(--state-success));
+  --color-state-warning: hsl(var(--state-warning));
+  --color-state-danger: hsl(var(--state-danger));
+  --font-sans: var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, hsl(var(--accent-soft)) 0, transparent 28%),
+    linear-gradient(180deg, hsl(var(--bg-app)) 0%, hsl(var(--bg-surface-muted)) 100%);
+  color: hsl(var(--text-primary));
+  font-family: var(--font-sans);
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border-strong));
+  border-radius: 999px;
+}
+
+.surface-card {
+  background: hsl(var(--bg-surface) / 0.88);
+  border: 1px solid hsl(var(--border-default));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(18px);
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ant-layout,
+.ant-layout-content {
+  background: transparent !important;
+}
+
+.ant-card,
+.ant-table-wrapper {
+  border-radius: var(--radius-sm);
+}

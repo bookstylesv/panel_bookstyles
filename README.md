@@ -1,73 +1,25 @@
-# React + TypeScript + Vite
+# Speeddan Control V3
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Panel central superadmin construido con Next.js App Router + Ant Design para integrar:
 
-Currently, two official plugins are available:
+- `factura-dte`
+- `barber-pro`
+- `Erp-full-web`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Principios
 
-## React Compiler
+- App Router desde el inicio
+- Integraciones server-side, no tokens privilegiados en cliente
+- Tema visual basado en variables CSS semanticas
+- Ant Design alimentado por tokens, sin colores hardcodeados en componentes
+- Estructura alineada con `speeddan-control-v2` y la metodologia de `Erp-full-web`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Variables requeridas
 
-## Expanding the ESLint configuration
+Configura las variables del archivo `.env.example` en Vercel para cada entorno.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Integracion actual
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- DTE: soporta API key server-side y fallback a login superadmin server-side
+- Barber: integra `/api/superadmin/*`
+- ERP: preparado para `/api/superadmin/*` en `Erp-full-web`
