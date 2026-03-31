@@ -1,10 +1,21 @@
 import type { ReactNode } from "react";
 import { Card, Statistic } from "antd";
 
+type Tone = "section" | "success" | "warning" | "danger" | "neutral";
+
+const TONE_VARS: Record<Tone, string> = {
+  section:  "",                  // usa accentVar original
+  success:  "--state-success",
+  warning:  "--state-warning",
+  danger:   "--state-danger",
+  neutral:  "--text-muted",
+};
+
 export function MetricCard({
   title,
   value,
   accentVar,
+  tone = "section",
   suffix,
   hint,
   icon,
@@ -12,17 +23,19 @@ export function MetricCard({
   title: string;
   value: number | string;
   accentVar: string;
+  tone?: Tone;
   suffix?: string;
   hint?: string;
   icon?: ReactNode;
 }) {
+  const colorVar = tone === "section" ? accentVar : TONE_VARS[tone];
   const isNumericValue = typeof value === "number";
 
   return (
     <Card
       className="surface-card border-0 h-full"
       size="small"
-      style={{ borderTop: `3px solid hsl(var(${accentVar}))` }}
+      style={{ borderTop: `3px solid hsl(var(${colorVar}))` }}
       styles={{
         body: {
           display: "flex",
@@ -63,7 +76,7 @@ export function MetricCard({
         {icon ? (
           <div
             style={{
-              color: `hsl(var(${accentVar}))`,
+              color: `hsl(var(${colorVar}))`,
               flexShrink: 0,
               display: "inline-flex",
               alignItems: "center",
@@ -71,7 +84,7 @@ export function MetricCard({
               width: "2rem",
               height: "2rem",
               borderRadius: "0.7rem",
-              background: `hsl(var(${accentVar}) / 0.1)`,
+              background: `hsl(var(${colorVar}) / 0.1)`,
             }}
           >
             {icon}
@@ -84,7 +97,7 @@ export function MetricCard({
           value={value}
           suffix={suffix}
           valueStyle={{
-            color: `hsl(var(${accentVar}))`,
+            color: `hsl(var(${colorVar}))`,
             fontSize: "1.95rem",
             lineHeight: 1,
             letterSpacing: "-0.04em",
@@ -93,7 +106,7 @@ export function MetricCard({
       ) : (
         <div
           style={{
-            color: `hsl(var(${accentVar}))`,
+            color: `hsl(var(${colorVar}))`,
             fontFamily: "var(--font-display)",
             fontSize: "1.5rem",
             lineHeight: 1.1,

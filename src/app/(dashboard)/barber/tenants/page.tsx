@@ -2,21 +2,28 @@ import Link from "next/link";
 import { Alert, Card, Tag } from "antd";
 import { DataTable } from "@/components/ui/DataTable";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { BarberTenantsSearch } from "@/components/barber/BarberTenantsSearch";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
 import { getBarberTenants } from "@/lib/integrations/barber";
 
-async function loadBarberTenants() {
+async function loadBarberTenants(search: string) {
   try {
-    const tenants = await getBarberTenants();
+    const params = new URLSearchParams(search ? { search } : {});
+    const tenants = await getBarberTenants(params);
     return { tenants };
   } catch (cause) {
     return { error: getErrorMessage(cause) };
   }
 }
 
-export default async function BarberTenantsPage() {
-  const result = await loadBarberTenants();
+export default async function BarberTenantsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+}) {
+  const { search = "" } = await searchParams;
+  const result = await loadBarberTenants(search);
 
   if ("error" in result) {
     return (
@@ -31,6 +38,9 @@ export default async function BarberTenantsPage() {
     <div className="space-y-6">
       <PageHeader eyebrow="Barber" title="Tenants Barber Pro" description="Listado centralizado de barberias conectadas a Barber Pro." />
       <Card className="surface-card border-0">
+        <div style={{ marginBottom: 16 }}>
+          <BarberTenantsSearch initialSearch={search} />
+        </div>
         <DataTable
           columns={[
             { key: "barberia", title: "Barberia" },
