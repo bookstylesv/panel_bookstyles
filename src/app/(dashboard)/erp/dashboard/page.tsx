@@ -1,6 +1,7 @@
-﻿import { Alert, Card, Col, Descriptions, Row, Tag } from "antd";
-import type { ReactNode } from "react";
-import { DataTable } from "@/components/ui/DataTable";
+import { Alert, Button, Card, Col, Descriptions, Row, Statistic, Tag } from "antd";
+import { Building2, TrendingUp, Users, PauseCircle } from "lucide-react";
+import { MetricCard } from "@/components/ui/MetricCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { formatNumber } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/error-message";
 import { getErpDashboard } from "@/lib/integrations/erp";
@@ -14,245 +15,150 @@ async function loadErpDashboard() {
   }
 }
 
-function MiniStatCard({
-  title,
-  value,
-  hint,
-  accent,
-}: {
-  title: string;
-  value: string | number;
-  hint: string;
-  accent: string;
-}) {
-  return (
-    <Card
-      className="surface-card border-0"
-      styles={{
-        body: {
-          display: "grid",
-          gap: 8,
-          padding: 12,
-          minHeight: 100,
-          borderTop: `3px solid ${accent}`,
-        },
-      }}
-    >
-      <div style={{ color: "hsl(var(--text-secondary))", fontSize: 11.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-        {title}
-      </div>
-      <div style={{ color: "hsl(var(--text-primary))", fontSize: "clamp(1.35rem, 2vw, 1.75rem)", fontWeight: 800, lineHeight: 1 }}>
-        {value}
-      </div>
-      <div style={{ color: "hsl(var(--text-muted))", fontSize: 12, lineHeight: 1.35 }}>{hint}</div>
-    </Card>
-  );
-}
-
 export default async function ErpDashboardPage() {
   const result = await loadErpDashboard();
 
   if ("error" in result) {
     return (
       <div className="space-y-4">
-        <Card className="surface-card border-0" styles={{ body: { padding: 14 } }}>
-          <div style={{ display: "grid", gap: 8 }}>
-            <Tag
-              bordered={false}
-              style={{
-                margin: 0,
-                width: "fit-content",
-                borderRadius: 999,
-                paddingInline: "0.75rem",
-                background: "hsl(var(--section-erp) / 0.12)",
-                color: "hsl(var(--section-erp))",
-                fontWeight: 700,
-              }}
-            >
-              ERP
-            </Tag>
-            <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.5rem, 2.3vw, 1.9rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}>
-              Dashboard ERP Full Pro
-            </h1>
-            <p style={{ margin: 0, maxWidth: 640, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
-              Vista compacta para revisar cobertura y estado sin meter una portada grande antes de los datos.
-            </p>
-          </div>
-        </Card>
+        <PageHeader eyebrow="ERP" title="Dashboard ERP Full Pro" description="No se pudo cargar el dashboard." />
         <Alert type="warning" showIcon message="ERP aun no responde al contrato superadmin" description={result.error} />
       </div>
     );
   }
 
-  const total = result.dashboard.total;
-  const activos = result.dashboard.activos;
-  const enTrial = result.dashboard.en_trial;
-  const suspendidos = result.dashboard.suspendidos;
+  const { dashboard } = result;
+  const { total, activos, en_trial: enTrial, suspendidos } = dashboard;
   const coverage = total > 0 ? Math.round((activos / total) * 100) : 0;
-  const planRows = Object.entries(result.dashboard.por_plan).map(([plan, total]) => ({ plan, total }));
+  const planEntries = Object.entries(dashboard.por_plan).filter(([, v]) => v > 0);
 
   return (
     <div className="space-y-4">
-      <Card
-        className="surface-card border-0"
-        styles={{
-          body: {
-            display: "grid",
-            gap: 10,
-            padding: 14,
-          },
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gap: 12,
-            gridTemplateColumns: "minmax(0, 1.25fr) minmax(280px, 0.75fr)",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ display: "grid", gap: 8 }}>
-            <Tag
-              bordered={false}
-              style={{
-                margin: 0,
-                width: "fit-content",
-                borderRadius: 999,
-                paddingInline: "0.75rem",
-                background: "hsl(var(--section-erp) / 0.12)",
-                color: "hsl(var(--section-erp))",
-                fontWeight: 700,
-              }}
-            >
-              ERP
-            </Tag>
-            <h1
-              style={{
-                margin: 0,
-                color: "hsl(var(--text-primary))",
-                fontSize: "clamp(1.5rem, 2.3vw, 1.95rem)",
-                lineHeight: 1.08,
-                letterSpacing: "-0.03em",
-              }}
-            >
-              Cobertura operativa y estado del ERP en una sola lectura.
-            </h1>
-            <p style={{ margin: 0, maxWidth: 650, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
-              Resumen compacto para ver capacidad, actividad y salud del contrato superadmin sin espacios sobrantes.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gap: 8,
-              padding: 12,
-              borderRadius: 18,
-              border: "1px solid hsl(var(--border-default))",
-              background: "hsl(var(--bg-surface))",
-            }}
+      <PageHeader
+        eyebrow="ERP"
+        title="Dashboard ERP Full Pro"
+        description="Monitoreo central de tenants, trials y suscripciones activas."
+        actions={
+          <Button
+            href="/erp/tenants"
+            type="primary"
+            style={{ background: "hsl(var(--section-erp))", borderColor: "hsl(var(--section-erp))" }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-              <div>
-                <div style={{ color: "hsl(var(--text-muted))", fontSize: 12 }}>Cobertura</div>
-                <div style={{ color: "hsl(var(--text-primary))", fontSize: 20, fontWeight: 800 }}>{coverage}%</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ color: "hsl(var(--text-muted))", fontSize: 12 }}>Activos</div>
-                <div style={{ color: "hsl(var(--text-primary))", fontSize: 20, fontWeight: 800 }}>{formatNumber(activos)}</div>
-              </div>
-            </div>
-            <Descriptions bordered={false} column={1} size="small">
-              <Descriptions.Item label="Total">{formatNumber(total)}</Descriptions.Item>
-              <Descriptions.Item label="En trial">{formatNumber(enTrial)}</Descriptions.Item>
-              <Descriptions.Item label="Suspendidos">{formatNumber(suspendidos)}</Descriptions.Item>
-            </Descriptions>
-          </div>
-        </div>
-      </Card>
+            Ver tenants
+          </Button>
+        }
+      />
 
       <Row gutter={[12, 12]}>
         <Col xs={24} sm={12} xl={6}>
-          <MiniStatCard title="Total" value={formatNumber(total)} hint="Tenants registrados" accent="hsl(var(--section-erp))" />
+          <MetricCard
+            title="Total tenants"
+            value={total}
+            accentVar="--section-erp"
+            icon={<Building2 size={18} />}
+          />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MiniStatCard title="Activos" value={formatNumber(activos)} hint="Con servicio disponible" accent="hsl(var(--status-success))" />
+          <MetricCard
+            title="Activos"
+            value={activos}
+            accentVar="--section-erp"
+            tone="success"
+            icon={<TrendingUp size={18} />}
+          />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MiniStatCard title="En trial" value={formatNumber(enTrial)} hint="Cuentas en periodo de prueba" accent="hsl(var(--status-warning))" />
+          <MetricCard
+            title="En trial"
+            value={enTrial}
+            accentVar="--section-erp"
+            tone="warning"
+            icon={<Users size={18} />}
+          />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MiniStatCard title="Suspendidos" value={formatNumber(suspendidos)} hint="Requieren revision" accent="hsl(var(--status-error))" />
+          <MetricCard
+            title="Suspendidos"
+            value={suspendidos}
+            accentVar="--section-erp"
+            tone="danger"
+            icon={<PauseCircle size={18} />}
+          />
         </Col>
       </Row>
 
       <Row gutter={[12, 12]}>
-        <Col xs={24} xl={15}>
+        <Col xs={24} xl={14}>
           <Card
             className="surface-card border-0"
+            styles={{ body: { padding: "1rem" } }}
             title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Distribucion por plan</span>}
-            styles={{ body: { padding: 12 } }}
           >
-            <DataTable
-              caption="Planes activos por segmento ERP"
-              columns={[
-                { key: "plan", title: "Plan" },
-                { key: "total", title: "Total", align: "right" },
-              ]}
-              rows={planRows.map((row) => ({
-                key: row.plan,
-                cells: [row.plan, formatNumber(row.total)],
-              }))}
-              emptyState="No hay planes reportados por el ERP."
-            />
+            <Row gutter={[12, 12]}>
+              {planEntries.length > 0 ? planEntries.map(([plan, count]) => (
+                <Col key={plan} xs={12} md={6}>
+                  <div style={{
+                    padding: "0.9rem",
+                    borderRadius: 12,
+                    border: "1px solid hsl(var(--border-default))",
+                    background: "hsl(var(--bg-surface))",
+                    textAlign: "center",
+                  }}>
+                    <Statistic
+                      value={count}
+                      valueStyle={{ color: "hsl(var(--section-erp))", fontSize: "1.6rem", fontWeight: 800 }}
+                    />
+                    <Tag bordered={false} style={{
+                      marginTop: 4,
+                      borderRadius: 999,
+                      background: "hsl(var(--section-erp) / 0.1)",
+                      color: "hsl(var(--section-erp))",
+                      fontWeight: 700,
+                      fontSize: 11,
+                    }}>
+                      {plan}
+                    </Tag>
+                  </div>
+                </Col>
+              )) : (
+                <Col span={24}>
+                  <p style={{ color: "hsl(var(--text-muted))", margin: 0 }}>Sin datos de planes.</p>
+                </Col>
+              )}
+            </Row>
           </Card>
         </Col>
 
-        <Col xs={24} xl={9}>
+        <Col xs={24} xl={10}>
           <Card
             className="surface-card border-0"
-            title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Lectura operativa</span>}
-            styles={{ body: { display: "grid", gap: 8, padding: 12 } }}
+            styles={{ body: { padding: "1rem" } }}
+            title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Resumen operativo</span>}
           >
-            <div
-              style={{
-                display: "grid",
-                gap: 8,
-                padding: 12,
-                borderRadius: 16,
-                border: "1px solid hsl(var(--border-default))",
-                background: "hsl(var(--bg-surface))",
-              }}
-            >
-              <div style={{ color: "hsl(var(--text-muted))", fontSize: 12 }}>Cobertura activa</div>
-              <div style={{ color: "hsl(var(--text-primary))", fontSize: 20, fontWeight: 800 }}>{coverage}%</div>
-              <div style={{ color: "hsl(var(--text-muted))", fontSize: 12, lineHeight: 1.4 }}>
-                {formatNumber(activos)} activos sobre {formatNumber(total)} totales.
-              </div>
-            </div>
+            <Descriptions size="small" column={1} styles={{ label: { width: 140 } }}>
+              <Descriptions.Item label="Total tenants">{formatNumber(total)}</Descriptions.Item>
+              <Descriptions.Item label="Activos">
+                <span style={{ color: "hsl(var(--state-success))", fontWeight: 700 }}>{formatNumber(activos)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label="En trial">
+                <span style={{ color: "hsl(var(--state-warning))", fontWeight: 700 }}>{formatNumber(enTrial)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label="Suspendidos">
+                <span style={{ color: "hsl(var(--state-danger))", fontWeight: 700 }}>{formatNumber(suspendidos)}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label="Cobertura activa">
+                <span style={{ color: "hsl(var(--section-erp))", fontWeight: 700 }}>{coverage}%</span>
+              </Descriptions.Item>
+              <Descriptions.Item label="Planes activos">{planEntries.length}</Descriptions.Item>
+            </Descriptions>
 
-            <div
-              style={{
-                display: "grid",
-                gap: 8,
-                padding: 12,
-                borderRadius: 16,
-                border: "1px solid hsl(var(--border-default))",
-                background: "hsl(var(--bg-surface))",
-              }}
-            >
-              <div style={{ color: "hsl(var(--text-muted))", fontSize: 12 }}>Segmentacion</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                <Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--status-success-bg))", color: "hsl(var(--status-success))", fontWeight: 700 }}>
-                  {formatNumber(activos)} activos
-                </Tag>
-                <Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--status-warning-bg))", color: "hsl(var(--status-warning))", fontWeight: 700 }}>
-                  {formatNumber(enTrial)} trial
-                </Tag>
-                <Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--status-error-bg))", color: "hsl(var(--status-error))", fontWeight: 700 }}>
-                  {formatNumber(suspendidos)} suspendidos
-                </Tag>
-              </div>
+            <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+              <Button size="small" href="/erp/tenants" block>
+                Ver tenants
+              </Button>
+              <Button size="small" href="/erp/health" block>
+                Health check
+              </Button>
             </div>
           </Card>
         </Col>
