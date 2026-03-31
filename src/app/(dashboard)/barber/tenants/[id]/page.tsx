@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDate } from "@/lib/formatters";
 import { getBarberTenant } from "@/lib/integrations/barber";
+import { BarberTenantActions } from "@/components/barber/BarberTenantActions";
 
 async function loadBarberTenant(id: string) {
   try {
@@ -34,7 +35,12 @@ export default async function BarberTenantDetailPage({
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="Barber" title={tenant.name} description="Detalle del tenant Barber Pro con capacidad operativa y consumo base." />
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+        <PageHeader eyebrow="Barber" title={tenant.name} description="Detalle del tenant Barber Pro con capacidad operativa y consumo base." />
+        <div style={{ paddingTop: 4, flexShrink: 0 }}>
+          <BarberTenantActions tenantId={tenant.id} status={tenant.status} />
+        </div>
+      </div>
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={14}>
           <Card className="surface-card border-0">

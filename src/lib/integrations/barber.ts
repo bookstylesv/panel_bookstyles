@@ -66,6 +66,20 @@ export async function getBarberTenant(id: number) {
   });
 }
 
+export async function suspendBarberTenant(id: number) {
+  return fetchJson<{ message: string }>(`${getBaseUrl()}/tenants/${id}/suspend`, {
+    method: "POST",
+    headers: getHeaders(),
+  });
+}
+
+export async function activateBarberTenant(id: number) {
+  return fetchJson<{ message: string }>(`${getBaseUrl()}/tenants/${id}/activate`, {
+    method: "POST",
+    headers: getHeaders(),
+  });
+}
+
 export async function getBarberHealth(): Promise<ServiceHealth> {
   const data = await fetchJson<{
     status: "ok" | "error";
