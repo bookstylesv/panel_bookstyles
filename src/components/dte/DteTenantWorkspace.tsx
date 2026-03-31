@@ -1,4 +1,4 @@
-"use client";
+ï»¿"use client";
 
 import type { ReactNode } from "react";
 import { Alert, Card, Descriptions, Empty, Space, Table, Tag, Tabs, Timeline, type TabsProps } from "antd";
@@ -10,7 +10,6 @@ import {
   MapPinned,
   Palette,
   Receipt,
-  ShieldCheck,
   Signature,
   Users,
   PlugZap,
@@ -109,6 +108,21 @@ function isExpired(date: string | null | undefined) {
 function display(value: string | number | null | undefined) {
   if (value === null || value === undefined || value === "") return "Sin dato";
   return String(value);
+}
+
+function toCssColor(value: string | null | undefined, fallback: string) {
+  if (!value) return fallback;
+
+  const trimmed = value.trim();
+  if (trimmed.startsWith("#") || trimmed.startsWith("rgb") || trimmed.startsWith("hsl") || trimmed.startsWith("var(")) {
+    return trimmed;
+  }
+
+  if (/^\d+\s+\d+%\s+\d+%$/.test(trimmed)) {
+    return `hsl(${trimmed})`;
+  }
+
+  return trimmed;
 }
 
 function SectionCard({ title, description, children }: { title: string; description: string; children: ReactNode }) {
@@ -210,14 +224,14 @@ export function DteTenantWorkspace({
   const activeUsers = usuariosOrdenados.filter((user) => user.activo).length;
   const pointsOfSale = countPoints(sucursalesOrdenadas);
   const apiReady = Boolean(apiMh && apiMh.tiene_password && apiMh.tiene_token);
-  const firmaReady = Boolean(firma?.fecha_vencimiento) && !isExpired(firma.fecha_vencimiento);
+  const firmaReady = Boolean(firma?.fecha_vencimiento) && !isExpired(firma?.fecha_vencimiento);
   const companyName = empresaConfig?.nombre_negocio ?? tenant.nombre;
   const tenantPlan = tenant.plan_nombre ?? "Sin plan";
 
-  const accentColor = temaConfig?.accent ?? "hsl(var(--section-dte))";
-  const pageColor = temaConfig?.page_bg ?? "hsl(var(--bg-surface))";
-  const cardColor = temaConfig?.card_bg ?? "hsl(var(--bg-surface-strong))";
-  const sidebarColor = temaConfig?.sidebar_bg ?? "hsl(var(--bg-sidebar))";
+  const accentColor = toCssColor(temaConfig?.accent, "hsl(var(--section-dte))");
+  const pageColor = toCssColor(temaConfig?.page_bg, "hsl(var(--bg-surface))");
+  const cardColor = toCssColor(temaConfig?.card_bg, "hsl(var(--bg-surface-strong))");
+  const sidebarColor = toCssColor(temaConfig?.sidebar_bg, "hsl(var(--bg-sidebar))");
 
   const tabs: TabsProps["items"] = [
     {
@@ -524,7 +538,7 @@ export function DteTenantWorkspace({
                     <Space wrap>
                       {puntos.map((point) => (
                         <Tag key={point.id} bordered={false} style={{ margin: 0, borderRadius: 999, ...pillStyle(point.activo ? "success" : "error") }}>
-                          {point.nombre} · {point.codigo}
+                          {point.nombre} Â· {point.codigo}
                         </Tag>
                       ))}
                     </Space>
@@ -541,7 +555,7 @@ export function DteTenantWorkspace({
                 },
                 {
                   title: "Contacto",
-                  render: (_: unknown, record) => `${record.telefono ?? "Sin tel"} · ${record.correo ?? "Sin correo"}`,
+                  render: (_: unknown, record) => `${record.telefono ?? "Sin tel"} Â· ${record.correo ?? "Sin correo"}`,
                 },
                 {
                   title: "Estado",
@@ -757,7 +771,7 @@ export function DteTenantWorkspace({
               <HeroStat
                 label="Ultimo pago"
                 value={latestPago ? formatDate(latestPago.fecha_pago ?? latestPago.created_at ?? null) : formatDate(tenant.fecha_pago)}
-                helper={latestPago ? `${formatCurrency(latestPago.monto)} · ${latestPago.metodo ?? "Sin metodo"}` : "Sin pago cargado"}
+                helper={latestPago ? `${formatCurrency(latestPago.monto)} Â· ${latestPago.metodo ?? "Sin metodo"}` : "Sin pago cargado"}
                 accentVar="--section-barber"
               />
               <HeroStat
@@ -775,7 +789,7 @@ export function DteTenantWorkspace({
               <HeroStat
                 label="Series DTE"
                 value={dteOrdenado.length}
-                helper={latestDte ? `${latestDte.tipo_dte} · ${latestDte.prefijo}` : "Sin series cargadas"}
+                helper={latestDte ? `${latestDte.tipo_dte} Â· ${latestDte.prefijo}` : "Sin series cargadas"}
                 accentVar="--section-dte"
               />
             </div>
@@ -832,3 +846,4 @@ export function DteTenantWorkspace({
     </div>
   );
 }
+

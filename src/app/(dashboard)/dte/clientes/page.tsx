@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Alert, Card, Col, Row, Tag } from "antd";
-import { Clock3, CreditCard, LifeBuoy, ShieldCheck, Users } from "lucide-react";
+import { Alert, Button, Card, Col, Row, Tag } from "antd";
+import { BarChart3, Building2, CreditCard, Database, Map, Palette, ShieldCheck, Users } from "lucide-react";
 import { DataTable } from "@/components/ui/DataTable";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -8,7 +8,36 @@ import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly, formatNumber } from "@/lib/formatters";
 import { getDteTenants } from "@/lib/integrations/dte";
 
-async function loadDteTenantsPage() {
+const QUICK_LINKS = [
+  { href: "/dte/dashboard", label: "Dashboard", helper: "Salud y alertas del ecosistema", icon: BarChart3 },
+  { href: "/dte/planes", label: "Planes", helper: "Tarifas y limites", icon: CreditCard },
+  { href: "/dte/mapa", label: "Mapa", helper: "Distribucion geografica", icon: Map },
+  { href: "/dte/analytics", label: "Analytics", helper: "KPIs historicos", icon: Database },
+  { href: "/dte/health", label: "Health", helper: "Estado tecnico", icon: ShieldCheck },
+  { href: "/dte/auditoria", label: "Auditoria", helper: "Eventos del sistema", icon: Building2 },
+  { href: "/dte/backups", label: "Backups", helper: "Retencion y descargas", icon: Database },
+  { href: "/dte/tema", label: "Tema", helper: "Tokens visuales", icon: Palette },
+];
+
+type SearchParams = {
+  q?: string | string[];
+  estado?: string | string[];
+};
+
+function firstValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] ?? "" : value ?? "";
+}
+
+function makeHref(q: string, estado: string, nextEstado?: string) {
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  const finalEstado = nextEstado ?? estado;
+  if (finalEstado && finalEstado !== "todos") params.set("estado", finalEstado);
+  const query = params.toString();
+  return query ? `/dte/clientes?${query}` : "/dte/clientes";
+}
+
+async function loadDteClients() {
   try {
     const tenants = await getDteTenants();
     return { tenants };
@@ -17,28 +46,128 @@ async function loadDteTenantsPage() {
   }
 }
 
-export default async function DteClientesPage() {
-  const result = await loadDteTenantsPage();
+function QuickAccessGrid() {
+  return (
+    <div
+      style={{
+        display: "grid",
+        gap: "0.75rem",
+        gridTemplateColumns: "repeat(auto-fit, minmax(12rem, 1fr))",
+      }}
+    >
+      {QUICK_LINKS.map((item) => {
+        const Icon = item.icon;
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "0.75rem",
+              borderRadius: "1rem",
+              border: "1px solid hsl(var(--border-default))",
+              background: "hsl(var(--bg-surface))",
+              padding: "0.9rem 1rem",
+              minHeight: "4.25rem",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
+              <div
+                style={{
+                  width: "2.3rem",
+                  height: "2.3rem",
+                  borderRadius: "0.85rem",
+                  display: "grid",
+                  placeItems: "center",
+                  color: "hsl(var(--section-dte))",
+                  background: "hsl(var(--section-dte) / 0.12)",
+                  flexShrink: 0,
+                }}
+              >
+                <Icon size={15} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ color: "hsl(var(--text-primary))", fontWeight: 700, lineHeight: 1.2 }}>
+                  {item.label}
+                </div>
+                <div style={{ color: "hsl(var(--text-muted))", fontSize: "0.8rem", lineHeight: 1.35 }}>
+                  {item.helper}
+                </div>
+              </div>
+            </div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function stateStyle(estado: string) {
+  if (estado === "activo") {
+    return { background: "hsl(var(--status-success-bg))", color: "hsl(var(--status-success))" };
+  }
+  if (estado === "pruebas") {
+    return { background: "hsl(var(--status-warning-bg))", color: "hsl(var(--status-warning))" };
+  }
+  return { background: "hsl(var(--status-error-bg))", color: "hsl(var(--status-error))" };
+}
+
+export default async function DteClientesPage({ searchParams }: { searchParams?: SearchParams }) {
+  const result = await loadDteClients();
+  const q = firstValue(searchParams?.q).trim();
+  const estado = firstValue(searchParams?.estado) || "todos";
 
   if ("error" in result) {
     return (
       <div className="space-y-6">
-        <PageHeader eyebrow="DTE" title="Clientes DTE" description="No se pudo consultar la lista de clientes." />
+        <PageHeader
+          eyebrow="DTE"
+          title="Clientes DTE"
+          description="No se pudo consultar la lista de clientes."
+        />
         <Alert type="error" showIcon message="Fallo la integracion" description={result.error} />
+        <Card className="surface-card border-0">
+          <QuickAccessGrid />
+        </Card>
       </div>
     );
   }
 
   const tenants = result.tenants;
+  const filtered = tenants.filter((row) => {
+    const search = q.toLowerCase();
+    const matchesSearch =
+      !search ||
+      row.nombre.toLowerCase().includes(search) ||
+      row.slug.toLowerCase().includes(search) ||
+      (row.plan_nombre ?? "").toLowerCase().includes(search) ||
+      (row.email_contacto ?? "").toLowerCase().includes(search) ||
+      (row.telefono ?? "").toLowerCase().includes(search);
+    const matchesEstado = estado === "todos" || row.estado === estado;
+    return matchesSearch && matchesEstado;
+  });
+
   const activos = tenants.filter((row) => row.estado === "activo").length;
   const pruebas = tenants.filter((row) => row.estado === "pruebas").length;
   const suspendidos = tenants.filter((row) => row.estado === "suspendido").length;
   const porVencer = tenants.filter(
     (row) => row.dias_para_vencer !== null && row.dias_para_vencer >= 0 && row.dias_para_vencer <= 7,
   ).length;
-  const vencidos = tenants.filter(
-    (row) => row.dias_para_vencer !== null && row.dias_para_vencer < 0,
-  ).length;
+  const vencidos = tenants.filter((row) => row.dias_para_vencer !== null && row.dias_para_vencer < 0).length;
+
+  const emptyState = q || estado !== "todos"
+    ? (
+      <div style={{ display: "grid", gap: "0.75rem", placeItems: "center" }}>
+        <div style={{ color: "hsl(var(--text-muted))" }}>No hay clientes que coincidan con los filtros.</div>
+        <Link href="/dte/clientes" style={{ color: "hsl(var(--section-dte))", fontWeight: 700 }}>
+          Limpiar filtros
+        </Link>
+      </div>
+    )
+    : "Aun no hay clientes registrados.";
 
   return (
     <div className="space-y-6">
@@ -47,21 +176,81 @@ export default async function DteClientesPage() {
         title="Clientes DTE"
         description="Listado maestro de tenants DTE con foco en estado, plan, vencimiento y acceso al detalle operativo."
         actions={
-          <Tag
-            bordered={false}
-            style={{
-              margin: 0,
-              borderRadius: 999,
-              paddingInline: "0.85rem",
-              background: "hsl(var(--bg-subtle))",
-              color: "hsl(var(--text-secondary))",
-              fontWeight: 700,
-            }}
-          >
-            {formatNumber(tenants.length)} registros
-          </Tag>
+          <>
+            <Tag bordered={false} style={{ margin: 0, borderRadius: 999, paddingInline: "0.85rem", background: "hsl(var(--bg-subtle))", color: "hsl(var(--text-secondary))", fontWeight: 700 }}>
+              {formatNumber(tenants.length)} registros
+            </Tag>
+            <Tag bordered={false} style={{ margin: 0, borderRadius: 999, paddingInline: "0.85rem", background: "hsl(var(--status-success-bg))", color: "hsl(var(--status-success))", fontWeight: 700 }}>
+              {formatNumber(filtered.filter((row) => row.estado === "activo").length)} visibles activos
+            </Tag>
+            <Tag bordered={false} style={{ margin: 0, borderRadius: 999, paddingInline: "0.85rem", background: "hsl(var(--status-error-bg))", color: "hsl(var(--status-error))", fontWeight: 700 }}>
+              {formatNumber(vencidos)} vencidos
+            </Tag>
+          </>
         }
       />
+
+      <Card
+        className="surface-card border-0"
+        styles={{
+          body: {
+            display: "grid",
+            gap: "1.25rem",
+            padding: "1.4rem",
+          },
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gap: "1rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(18rem, 1fr))",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--accent-soft) / 0.72)", color: "hsl(var(--accent-strong))", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              Maestro de clientes
+            </Tag>
+            <h3
+              style={{
+                margin: "0.9rem 0 0.45rem 0",
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(1.45rem, 2vw, 1.9rem)",
+                lineHeight: 1.05,
+                letterSpacing: "-0.04em",
+              }}
+            >
+              Busca, filtra y abre el detalle de cada tenant sin salir del flujo operativo.
+            </h3>
+            <p style={{ margin: 0, maxWidth: 720, color: "hsl(var(--text-muted))", lineHeight: 1.6 }}>
+              La lista conserva la lectura del superadmin original: estado, plan, vencimiento y una
+              composicion densa para operar rapido.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gap: "0.75rem",
+              gridTemplateColumns: "repeat(auto-fit, minmax(9rem, 1fr))",
+            }}
+          >
+            <div style={{ borderRadius: "1rem", padding: "0.95rem", border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-subtle))" }}>
+              <div style={{ fontSize: "0.78rem", color: "hsl(var(--text-muted))" }}>Activos</div>
+              <strong style={{ display: "block", marginTop: "0.35rem", fontFamily: "var(--font-display)", fontSize: "1.35rem" }}>{formatNumber(activos)}</strong>
+            </div>
+            <div style={{ borderRadius: "1rem", padding: "0.95rem", border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-subtle))" }}>
+              <div style={{ fontSize: "0.78rem", color: "hsl(var(--text-muted))" }}>Pruebas</div>
+              <strong style={{ display: "block", marginTop: "0.35rem", fontFamily: "var(--font-display)", fontSize: "1.35rem" }}>{formatNumber(pruebas)}</strong>
+            </div>
+            <div style={{ borderRadius: "1rem", padding: "0.95rem", border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-subtle))" }}>
+              <div style={{ fontSize: "0.78rem", color: "hsl(var(--text-muted))" }}>Vencidos</div>
+              <strong style={{ display: "block", marginTop: "0.35rem", fontFamily: "var(--font-display)", fontSize: "1.35rem" }}>{formatNumber(vencidos)}</strong>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} xl={4}>
@@ -74,50 +263,146 @@ export default async function DteClientesPage() {
           <MetricCard title="Pruebas" value={pruebas} accentVar="--section-dte" icon={<CreditCard size={18} />} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Suspendidos" value={suspendidos} accentVar="--section-dte" icon={<LifeBuoy size={18} />} />
+          <MetricCard title="Suspendidos" value={suspendidos} accentVar="--section-dte" icon={<Database size={18} />} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Por vencer" value={porVencer} accentVar="--section-dte" icon={<Clock3 size={18} />} />
+          <MetricCard title="Por vencer" value={porVencer} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Vencidos" value={vencidos} accentVar="--section-dte" icon={<Clock3 size={18} />} />
+          <MetricCard title="Vencidos" value={vencidos} accentVar="--section-dte" icon={<Database size={18} />} />
         </Col>
       </Row>
 
-      <Card className="surface-card border-0">
-        <DataTable
-          columns={[
-            { key: "cliente", title: "Cliente" },
-            { key: "slug", title: "Slug" },
-            { key: "contacto", title: "Contacto" },
-            { key: "plan", title: "Plan" },
-            { key: "estado", title: "Estado" },
-            { key: "vence", title: "Vence" },
-            { key: "dias", title: "Dias", align: "right" },
-          ]}
-          rows={tenants.map((row) => ({
-            key: String(row.id),
-            cells: [
-              <Link key={`link-${row.id}`} href={`/dte/clientes/${row.id}`}>
-                {row.nombre}
-              </Link>,
-              row.slug,
-              row.email_contacto ?? row.telefono ?? "Sin dato",
-              row.plan_nombre ?? "Sin plan",
-              <Tag
-                key={`status-${row.id}`}
-                color={row.estado === "activo" ? "success" : row.estado === "pruebas" ? "processing" : "error"}
-              >
-                {row.estado}
-              </Tag>,
-              formatDateOnly(row.fecha_pago),
-              row.dias_para_vencer ?? "N/A",
-            ],
-          }))}
-          caption="Tenants DTE"
-          emptyState="No hay tenants DTE disponibles."
-        />
-      </Card>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} xl={16}>
+          <Card className="surface-card border-0" styles={{ body: { display: "grid", gap: "0.9rem" } }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
+              <div>
+                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "hsl(var(--text-primary))" }}>
+                  Buscar y filtrar
+                </div>
+                <div style={{ fontSize: "0.82rem", color: "hsl(var(--text-muted))" }}>
+                  {formatNumber(filtered.length)} resultados visibles de {formatNumber(tenants.length)}
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                {[
+                  { key: "todos", label: "Todos" },
+                  { key: "activo", label: "Activos" },
+                  { key: "pruebas", label: "Pruebas" },
+                  { key: "suspendido", label: "Suspendidos" },
+                ].map((item) => (
+                  <Link
+                    key={item.key}
+                    href={makeHref(q, estado, item.key)}
+                    style={{
+                      borderRadius: 999,
+                      padding: "0.45rem 0.8rem",
+                      fontSize: "0.82rem",
+                      fontWeight: 700,
+                      background: item.key === estado ? "hsl(var(--status-info-bg))" : "hsl(var(--bg-subtle))",
+                      color: item.key === estado ? "hsl(var(--status-info))" : "hsl(var(--text-secondary))",
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <form method="get" action="/dte/clientes" style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              <input type="hidden" name="estado" value={estado === "todos" ? "" : estado} />
+              <input
+                name="q"
+                defaultValue={q}
+                placeholder="Buscar por nombre, slug, plan, correo o telefono..."
+                style={{
+                  flex: "1 1 20rem",
+                  borderRadius: "1rem",
+                  border: "1px solid hsl(var(--border-default))",
+                  background: "hsl(var(--bg-surface))",
+                  padding: "0.85rem 1rem",
+                  color: "hsl(var(--text-primary))",
+                }}
+              />
+              <Button htmlType="submit" type="default">
+                Buscar
+              </Button>
+              {(q || estado !== "todos") ? (
+                <Button href="/dte/clientes" type="text">
+                  Limpiar
+                </Button>
+              ) : null}
+            </form>
+          </Card>
+
+          <Card className="surface-card border-0" style={{ marginTop: 16 }}>
+            <DataTable
+              caption="Listado maestro de clientes DTE"
+              columns={[
+                { key: "cliente", title: "Cliente" },
+                { key: "slug", title: "Slug" },
+                { key: "contacto", title: "Contacto" },
+                { key: "plan", title: "Plan" },
+                { key: "estado", title: "Estado" },
+                { key: "vence", title: "Vence" },
+                { key: "dias", title: "Dias", align: "right" },
+                { key: "accion", title: "Accion", align: "right" },
+              ]}
+              rows={filtered.map((row) => ({
+                key: String(row.id),
+                cells: [
+                  <Link key={`link-${row.id}`} href={`/dte/clientes/${row.id}`}>
+                    {row.nombre}
+                  </Link>,
+                  row.slug,
+                  row.email_contacto ?? row.telefono ?? "Sin dato",
+                  row.plan_nombre ?? "Sin plan",
+                  <Tag key={`status-${row.id}`} bordered={false} style={{ margin: 0, borderRadius: 999, paddingInline: "0.7rem", fontWeight: 700, ...stateStyle(row.estado) }}>
+                    {row.estado}
+                  </Tag>,
+                  formatDateOnly(row.fecha_pago),
+                  row.dias_para_vencer ?? "N/A",
+                  <Link key={`detail-${row.id}`} href={`/dte/clientes/${row.id}`} style={{ color: "hsl(var(--section-dte))", fontWeight: 700 }}>
+                    Abrir
+                  </Link>,
+                ],
+              }))}
+              emptyState={emptyState}
+            />
+          </Card>
+        </Col>
+
+        <Col xs={24} xl={8}>
+          <Card className="surface-card border-0" styles={{ body: { display: "grid", gap: "0.9rem" } }}>
+            <div>
+              <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "hsl(var(--text-primary))" }}>
+                Accesos rapidos
+              </div>
+              <div style={{ fontSize: "0.82rem", color: "hsl(var(--text-muted))" }}>
+                Entra directo a los modulos que suelen usarse mas seguido.
+              </div>
+            </div>
+            <QuickAccessGrid />
+          </Card>
+
+          <Card className="surface-card border-0" style={{ marginTop: 16 }}>
+            <DataTable
+              caption="Lectura rapida"
+              columns={[
+                { key: "indicador", title: "Indicador" },
+                { key: "valor", title: "Valor", align: "right" },
+              ]}
+              rows={[
+                { key: "total", cells: ["Total", formatNumber(tenants.length)] },
+                { key: "visibles", cells: ["Filtrados", formatNumber(filtered.length)] },
+                { key: "por-vencer", cells: ["Por vencer", formatNumber(porVencer)] },
+                { key: "vencidos", cells: ["Vencidos", formatNumber(vencidos)] },
+              ]}
+            />
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }
