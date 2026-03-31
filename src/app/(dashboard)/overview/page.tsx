@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Alert, Card, Col, Row, Tag, Typography } from "antd";
+import { Alert, Card, Col, Row, Tag } from "antd";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
@@ -139,9 +139,16 @@ export default async function OverviewPage() {
                   >
                     {service.name}
                   </Tag>
-                  <Typography.Title level={4} style={{ margin: "0.9rem 0 0 0" }}>
+                  <h3
+                    style={{
+                      margin: "0.9rem 0 0 0",
+                      fontSize: "1.25rem",
+                      lineHeight: 1.15,
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
                     Estado del servicio
-                  </Typography.Title>
+                  </h3>
                 </div>
                 <Link href={service.href}>Abrir modulo</Link>
               </div>

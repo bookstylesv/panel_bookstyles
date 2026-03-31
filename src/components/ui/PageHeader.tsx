@@ -1,5 +1,3 @@
-import { Typography } from "antd";
-
 export function PageHeader({
   eyebrow,
   title,
@@ -14,12 +12,19 @@ export function PageHeader({
       <span className="section-badge bg-[hsl(var(--accent-soft))] text-[hsl(var(--accent-strong))]">
         {eyebrow}
       </span>
-      <Typography.Title level={2} style={{ margin: "0.9rem 0 0.35rem 0" }}>
+      <h2
+        style={{
+          margin: "0.9rem 0 0.35rem 0",
+          fontSize: "1.9rem",
+          lineHeight: 1.1,
+          letterSpacing: "-0.03em",
+        }}
+      >
         {title}
-      </Typography.Title>
-      <Typography.Paragraph style={{ margin: 0, maxWidth: 760, color: "hsl(var(--text-muted))" }}>
+      </h2>
+      <p style={{ margin: 0, maxWidth: 760, color: "hsl(var(--text-muted))" }}>
         {description}
-      </Typography.Paragraph>
+      </p>
     </div>
   );
 }
