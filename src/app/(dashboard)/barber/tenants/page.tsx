@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Alert, Card, Col, Row, Tag } from "antd";
 import { DataTable } from "@/components/ui/DataTable";
 import { BarberTenantsSearch } from "@/components/barber/BarberTenantsSearch";
+import { NewBarberTenantDrawer } from "@/components/barber/NewBarberTenantDrawer";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
 import { getBarberTenants } from "@/lib/integrations/barber";
@@ -96,7 +97,7 @@ export default async function BarberTenantsPage({
               Listado centralizado de barberias conectadas a Barber Pro.
             </p>
           </div>
-          <BarberTenantsSearch initialSearch={search} />
+          <NewBarberTenantDrawer />
         </div>
       </div>
 
@@ -120,6 +121,9 @@ export default async function BarberTenantsPage({
         title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Listado de barberias</span>}
         extra={<Tag bordered={false} color="processing">{result.tenants.total} coincidencias</Tag>}
       >
+        <div style={{ marginBottom: 12 }}>
+          <BarberTenantsSearch initialSearch={search} />
+        </div>
         <DataTable
           caption={`Mostrando ${result.tenants.items.length} resultados en la pag. ${result.tenants.page} de ${result.tenants.pages}.`}
           columns={[

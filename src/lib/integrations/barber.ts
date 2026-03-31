@@ -66,6 +66,27 @@ export async function getBarberTenant(id: number) {
   });
 }
 
+export type CreateBarberTenantInput = {
+  name: string;
+  slug: string;
+  email?: string;
+  phone?: string;
+  city?: string;
+  plan?: BarberPlan;
+  maxBarbers?: number;
+  owner?: { fullName: string; email: string; password: string };
+};
+
+export type CreateBarberTenantResult = BarberTenantListItem & { ownerCreated: boolean };
+
+export async function createBarberTenant(data: CreateBarberTenantInput) {
+  return fetchJson<CreateBarberTenantResult>(`${getBaseUrl()}/tenants`, {
+    method: "POST",
+    headers: { ...getHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function suspendBarberTenant(id: number) {
   return fetchJson<{ message: string }>(`${getBaseUrl()}/tenants/${id}/suspend`, {
     method: "POST",
