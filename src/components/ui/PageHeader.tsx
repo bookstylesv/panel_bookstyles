@@ -1,4 +1,7 @@
 import type { ReactNode } from "react";
+import { Space, Tag, Typography } from "antd";
+
+const { Title, Text } = Typography;
 
 export function PageHeader({
   eyebrow,
@@ -12,7 +15,7 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <section
+    <div
       style={{
         display: "flex",
         flexWrap: "wrap",
@@ -23,52 +26,49 @@ export function PageHeader({
       }}
     >
       <div style={{ minWidth: 0, flex: "1 1 28rem" }}>
-        <span
+        <Tag
+          bordered={false}
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.45rem",
-            borderRadius: "9999px",
-            padding: "0.4rem 0.75rem",
+            margin: 0,
             background: "hsl(var(--accent-soft) / 0.6)",
             color: "hsl(var(--accent-strong))",
-            fontSize: "0.72rem",
+            borderRadius: 999,
+            paddingInline: 10,
             fontWeight: 700,
-            letterSpacing: "0.16em",
+            letterSpacing: "0.1em",
             textTransform: "uppercase",
+            fontSize: 11,
+            lineHeight: "22px",
           }}
         >
           {eyebrow}
-        </span>
-        <h2
+        </Tag>
+
+        <Title
+          level={2}
           style={{
-            margin: "0.95rem 0 0.4rem 0",
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(1.85rem, 2.8vw, 2.5rem)",
+            margin: "0.85rem 0 0.35rem",
+            fontSize: "clamp(1.65rem, 2.6vw, 2.2rem)",
             lineHeight: 1.05,
-            letterSpacing: "-0.04em",
-            color: "hsl(var(--text-primary))",
+            letterSpacing: "-0.03em",
           }}
         >
           {title}
-        </h2>
-        <p
-          style={{
-            margin: 0,
-            maxWidth: 760,
-            color: "hsl(var(--text-muted))",
-            lineHeight: 1.6,
-          }}
+        </Title>
+
+        <Text
+          type="secondary"
+          style={{ lineHeight: 1.6, maxWidth: 760, display: "block" }}
         >
           {description}
-        </p>
+        </Text>
       </div>
 
-      {actions ? (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "flex-end" }}>
+      {actions && (
+        <Space wrap size={8} style={{ justifyContent: "flex-end" }}>
           {actions}
-        </div>
-      ) : null}
-    </section>
+        </Space>
+      )}
+    </div>
   );
 }

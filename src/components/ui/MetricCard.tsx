@@ -4,11 +4,11 @@ import { Card, Statistic } from "antd";
 type Tone = "section" | "success" | "warning" | "danger" | "neutral";
 
 const TONE_VARS: Record<Tone, string> = {
-  section:  "",                  // usa accentVar original
-  success:  "--state-success",
-  warning:  "--state-warning",
-  danger:   "--state-danger",
-  neutral:  "--text-muted",
+  section: "",
+  success: "--state-success",
+  warning: "--state-warning",
+  danger: "--state-danger",
+  neutral: "--text-muted",
 };
 
 export function MetricCard({
@@ -46,7 +46,14 @@ export function MetricCard({
         },
       }}
     >
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "0.75rem" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: "0.75rem",
+        }}
+      >
         <div style={{ minWidth: 0 }}>
           <div
             style={{
@@ -73,6 +80,7 @@ export function MetricCard({
             </div>
           ) : null}
         </div>
+
         {icon ? (
           <div
             style={{
@@ -81,10 +89,10 @@ export function MetricCard({
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "2rem",
-              height: "2rem",
-              borderRadius: "0.7rem",
-              background: `hsl(var(${colorVar}) / 0.1)`,
+              width: "2.4rem",
+              height: "2.4rem",
+              borderRadius: "0.9rem",
+              background: `hsl(var(${colorVar}) / 0.12)`,
             }}
           >
             {icon}
