@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatCurrency, formatDateOnly, formatNumber } from "@/lib/formatters";
@@ -69,18 +68,35 @@ function MetricTile({
   return (
     <div
       style={{
-        borderRadius: 16,
+        borderRadius: 14,
         border: "1px solid hsl(var(--border-default))",
         background: "hsl(var(--bg-surface))",
-        padding: "0.95rem 1rem",
+        padding: "0.8rem 0.9rem",
         boxShadow: "var(--shadow-sm)",
       }}
     >
-      <div style={{ width: 36, height: 4, borderRadius: 999, background: accent, marginBottom: 10 }} />
-      <div style={{ color: "hsl(var(--text-muted))", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+      <div style={{ width: 30, height: 3, borderRadius: 999, background: accent, marginBottom: 8 }} />
+      <div
+        style={{
+          color: "hsl(var(--text-muted))",
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+        }}
+      >
         {label}
       </div>
-      <div style={{ marginTop: 8, color: "hsl(var(--text-primary))", fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 800, lineHeight: 1 }}>
+      <div
+        style={{
+          marginTop: 6,
+          color: "hsl(var(--text-primary))",
+          fontFamily: "var(--font-display)",
+          fontSize: 18,
+          fontWeight: 800,
+          lineHeight: 1.05,
+        }}
+      >
         {value}
       </div>
     </div>
@@ -222,11 +238,6 @@ export default async function DteDashboardPage() {
     ...dashboard.alertas_vencidos.map((item) => ({ ...item, tipo: "Vencido" as const })),
   ];
 
-  const monthlyDelta = dashboard.ingresos_mes - dashboard.ingresos_mes_anterior;
-  const monthlyDeltaPct = dashboard.ingresos_mes_anterior
-    ? Math.round((monthlyDelta / dashboard.ingresos_mes_anterior) * 100)
-    : null;
-
   const healthDescItems = health
     ? [
         {
@@ -260,22 +271,6 @@ export default async function DteDashboardPage() {
         },
       ]
     : [];
-
-  const resumenItems = [
-    { key: "total", label: "Total tenants", children: formatNumber(dashboard.total) },
-    { key: "pruebas", label: "En pruebas", children: formatNumber(dashboard.en_pruebas) },
-    { key: "suspendidos", label: "Suspendidos", children: formatNumber(dashboard.suspendidos) },
-    { key: "por-vencer", label: "Por vencer", children: formatNumber(dashboard.por_vencer) },
-    { key: "vencidos", label: "Vencidos", children: formatNumber(dashboard.vencidos) },
-    { key: "nuevos-semana", label: "Nuevos esta semana", children: formatNumber(dashboard.nuevos_semana) },
-    { key: "nuevos-mes", label: "Nuevos este mes", children: formatNumber(dashboard.nuevos_mes) },
-    { key: "ingreso-mes", label: "Ingreso del mes", children: formatCurrency(dashboard.ingresos_mes) },
-    {
-      key: "delta-mes",
-      label: "Delta mensual",
-      children: `${monthlyDelta >= 0 ? "+" : ""}${formatCurrency(monthlyDelta)}`,
-    },
-  ];
 
   return (
     <div className="space-y-6">
@@ -329,46 +324,33 @@ export default async function DteDashboardPage() {
         }
       />
 
-      {/* Metric cards */}
       <Row gutter={[16, 16]}>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="MRR"
+          <MetricTile
+            label="MRR"
             value={formatCurrency(dashboard.mrr)}
-            accentVar="--section-dte"
-            hint="Ingreso recurrente mensual proyectado"
-            icon={<CreditCard size={18} />}
+            accent="hsl(var(--section-dte))"
           />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Cobrado este mes"
+          <MetricTile
+            label="Cobrado"
             value={formatCurrency(dashboard.ingresos_mes)}
-            accentVar="--section-dte"
-            hint={
-              monthlyDeltaPct === null
-                ? "Sin comparativa previa"
-                : `${monthlyDeltaPct >= 0 ? "+" : ""}${monthlyDeltaPct}% vs mes anterior`
-            }
-            icon={<ShieldCheck size={18} />}
+            accent="hsl(var(--section-dte))"
           />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Activos"
+          <MetricTile
+            label="Activos"
             value={dashboard.activos}
-            accentVar="--section-dte"
-            hint={`${formatNumber(dashboard.en_pruebas)} en pruebas`}
-            icon={<Users size={18} />}
+            accent="hsl(var(--section-dte))"
           />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Vencimientos"
+          <MetricTile
+            label="Vencimientos"
             value={dashboard.por_vencer + dashboard.vencidos}
-            accentVar="--section-dte"
-            hint={`${formatNumber(dashboard.vencidos)} vencidos y ${formatNumber(dashboard.por_vencer)} por vencer`}
-            icon={<Activity size={18} />}
+            accent="hsl(var(--section-dte))"
           />
         </Col>
       </Row>
@@ -447,69 +429,6 @@ export default async function DteDashboardPage() {
         </Col>
       </Row>
 
-      {/* Resumen + Lectura operativa */}
-      <Row gutter={[16, 16]}>
-        <Col xs={24} xl={12}>
-          <Card
-            className="surface-card border-0"
-            title={<SectionLabel>Resumen de cartera</SectionLabel>}
-            size="small"
-          >
-            <Descriptions
-              size="small"
-              column={1}
-              bordered
-              items={resumenItems}
-              style={{ borderRadius: 10, overflow: "hidden" }}
-            />
-          </Card>
-        </Col>
-
-        <Col xs={24} xl={12}>
-          <Card
-            className="surface-card border-0"
-            title={<SectionLabel>Lectura operativa</SectionLabel>}
-            size="small"
-            extra={
-              <a href="/dte/clientes" style={{ fontSize: 12, color: "hsl(var(--section-dte))", fontWeight: 600 }}>
-                Abrir clientes
-              </a>
-            }
-          >
-            <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
-              <Col xs={12}>
-                <MetricTile
-                  label="Renovacion activa"
-                  value={formatNumber(dashboard.total - dashboard.suspendidos)}
-                  accent="hsl(var(--section-dte))"
-                />
-              </Col>
-              <Col xs={12}>
-                <MetricTile
-                  label="Alertas abiertas"
-                  value={formatNumber(alertas.length)}
-                  accent={alertas.length > 0 ? "hsl(var(--state-warning))" : "hsl(var(--state-success))"}
-                />
-              </Col>
-            </Row>
-
-            <Alert
-              type={dashboard.vencidos > 0 ? "warning" : "success"}
-              showIcon
-              message={
-                dashboard.vencidos > 0
-                  ? "Hay cuentas DTE vencidas que requieren seguimiento"
-                  : "No hay cuentas vencidas al corte actual"
-              }
-              description={
-                dashboard.vencidos > 0
-                  ? `${formatNumber(dashboard.vencidos)} tenants vencidos y ${formatNumber(dashboard.por_vencer)} por vencer.`
-                  : "La cartera actual se mantiene operativa."
-              }
-            />
-          </Card>
-        </Col>
-      </Row>
     </div>
   );
 }

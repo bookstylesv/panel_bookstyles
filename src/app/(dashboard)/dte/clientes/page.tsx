@@ -3,7 +3,6 @@ import { Alert, Button, Card, Col, Input, Row, Tag } from "antd";
 import { BarChart3, Building2, CreditCard, Database, Map, Palette, ShieldCheck, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { DataTable } from "@/components/ui/DataTable";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly, formatNumber } from "@/lib/formatters";
@@ -197,7 +196,7 @@ export default async function DteClientesPage({ searchParams }: { searchParams?:
       <PageHeader
         eyebrow="DTE"
         title="Clientes DTE"
-        description="Listado maestro de tenants DTE con foco en estado, plan, vencimiento y acceso al detalle operativo."
+        description="Listado compacto de tenants DTE con búsqueda, estado, plan y vencimiento."
         actions={
           <>
             <Tag bordered={false} style={{ margin: 0, borderRadius: 999, paddingInline: "0.85rem", background: "hsl(var(--bg-subtle))", color: "hsl(var(--text-secondary))", fontWeight: 700 }}>
@@ -213,84 +212,24 @@ export default async function DteClientesPage({ searchParams }: { searchParams?:
         }
       />
 
-      <Card
-        className="surface-card border-0"
-        title={<SectionLabel>Resumen operativo</SectionLabel>}
-        styles={{
-          body: {
-            display: "grid",
-            gap: "1.25rem",
-            padding: "1.4rem",
-          },
-        }}
-      >
-            <div
-              style={{
-                display: "grid",
-                gap: "1rem",
-                gridTemplateColumns: "repeat(auto-fit, minmax(18rem, 1fr))",
-                alignItems: "center",
-              }}
-            >
-              <div>
-                <Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--accent-soft) / 0.72)", color: "hsl(var(--accent-strong))", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                  Maestro de clientes
-            </Tag>
-            <h3
-              style={{
-                margin: "0.9rem 0 0.45rem 0",
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(1.45rem, 2vw, 1.9rem)",
-                lineHeight: 1.05,
-                letterSpacing: "-0.04em",
-              }}
-            >
-              Busca, filtra y abre el detalle de cada tenant sin salir del flujo operativo.
-            </h3>
-            <p style={{ margin: 0, maxWidth: 720, color: "hsl(var(--text-muted))", lineHeight: 1.6 }}>
-              La lista conserva la lectura del superadmin original: estado, plan, vencimiento y una
-              composicion densa para operar rapido.
-            </p>
-          </div>
-
-            <div
-              style={{
-                display: "grid",
-                gap: "0.75rem",
-                gridTemplateColumns: "repeat(auto-fit, minmax(9rem, 1fr))",
-              }}
-            >
-              <MiniStat label="Activos" value={formatNumber(activos)} />
-              <MiniStat label="Pruebas" value={formatNumber(pruebas)} />
-              <MiniStat label="Vencidos" value={formatNumber(vencidos)} />
-            </div>
-          </div>
-      </Card>
-
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Total" value={tenants.length} accentVar="--section-dte" icon={<Users size={18} />} />
+        <Col xs={12} sm={12} xl={6}>
+          <MiniStat label="Total" value={formatNumber(tenants.length)} />
         </Col>
-        <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Activos" value={activos} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+        <Col xs={12} sm={12} xl={6}>
+          <MiniStat label="Activos" value={formatNumber(activos)} />
         </Col>
-        <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Pruebas" value={pruebas} accentVar="--section-dte" icon={<CreditCard size={18} />} />
+        <Col xs={12} sm={12} xl={6}>
+          <MiniStat label="Por vencer" value={formatNumber(porVencer)} />
         </Col>
-        <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Suspendidos" value={suspendidos} accentVar="--section-dte" icon={<Database size={18} />} />
-        </Col>
-        <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Por vencer" value={porVencer} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
-        </Col>
-        <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Vencidos" value={vencidos} accentVar="--section-dte" icon={<Database size={18} />} />
+        <Col xs={12} sm={12} xl={6}>
+          <MiniStat label="Vencidos" value={formatNumber(vencidos)} />
         </Col>
       </Row>
 
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={16}>
-          <Card className="surface-card border-0" title={<SectionLabel>Buscar y filtrar</SectionLabel>} styles={{ body: { display: "grid", gap: "0.9rem" } }}>
+          <Card className="surface-card border-0" title={<SectionLabel>Buscar y filtrar</SectionLabel>} styles={{ body: { display: "grid", gap: "0.75rem", padding: "1rem" } }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
               <div>
                 <div style={{ fontSize: "0.82rem", color: "hsl(var(--text-muted))" }}>
@@ -339,7 +278,7 @@ export default async function DteClientesPage({ searchParams }: { searchParams?:
                   Limpiar
                 </Button>
               ) : null}
-            </form>
+              </form>
           </Card>
 
           <Card className="surface-card border-0" title={<SectionLabel>Listado de clientes</SectionLabel>} style={{ marginTop: 16 }}>
@@ -380,29 +319,11 @@ export default async function DteClientesPage({ searchParams }: { searchParams?:
         </Col>
 
         <Col xs={24} xl={8}>
-          <Card className="surface-card border-0" title={<SectionLabel>Accesos rapidos</SectionLabel>} styles={{ body: { display: "grid", gap: "0.9rem" } }}>
-            <div>
-              <div style={{ fontSize: "0.82rem", color: "hsl(var(--text-muted))" }}>
-                Entra directo a los modulos que suelen usarse mas seguido.
-              </div>
+          <Card className="surface-card border-0" title={<SectionLabel>Accesos rapidos</SectionLabel>} styles={{ body: { display: "grid", gap: "0.75rem", padding: "1rem" } }}>
+            <div style={{ fontSize: "0.82rem", color: "hsl(var(--text-muted))" }}>
+              Entra directo a los modulos que mas se usan.
             </div>
             <QuickAccessGrid />
-          </Card>
-
-          <Card className="surface-card border-0" title={<SectionLabel>Lectura rapida</SectionLabel>} style={{ marginTop: 16 }}>
-            <DataTable
-              caption="Lectura rapida"
-              columns={[
-                { key: "indicador", title: "Indicador" },
-                { key: "valor", title: "Valor", align: "right" },
-              ]}
-              rows={[
-                { key: "total", cells: ["Total", formatNumber(tenants.length)] },
-                { key: "visibles", cells: ["Filtrados", formatNumber(filtered.length)] },
-                { key: "por-vencer", cells: ["Por vencer", formatNumber(porVencer)] },
-                { key: "vencidos", cells: ["Vencidos", formatNumber(vencidos)] },
-              ]}
-            />
           </Card>
         </Col>
       </Row>

@@ -7,8 +7,6 @@ import { ControlSidebar } from "@/components/layout/ControlSidebar";
 import { useAuth } from "@/context/AuthContext";
 
 const { Header, Content } = Layout;
-const { Text } = Typography;
-
 type SectionMeta = {
   matcher: (pathname: string) => boolean;
   label: string;
@@ -103,15 +101,12 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
               >
                 {active.label}
               </Tag>
-              <Text className="control-dashboard__path" style={{ color: "hsl(var(--text-muted))", fontSize: 11.5, fontFamily: "monospace" }}>
-                {pathname}
-              </Text>
             </Space>
 
             <Space className="control-dashboard__meta" size={8} wrap>
               {!onOverview && (
                 <Button size="small" type="default" onClick={() => router.push("/overview")}>
-                  Ir al overview
+                  Overview
                 </Button>
               )}
 
@@ -159,17 +154,14 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
                 </Avatar>
                 <div className="control-dashboard__user-meta">
                   <div
-                    style={{
+                  style={{
                       color: "hsl(var(--text-primary))",
-                      fontSize: 12,
+                      fontSize: 11.5,
                       fontWeight: 700,
                       lineHeight: 1.2,
                     }}
                   >
                     {sessionLabel}
-                  </div>
-                  <div style={{ color: "hsl(var(--text-muted))", fontSize: 10, lineHeight: 1 }}>
-                    Superadmin
                   </div>
                 </div>
               </div>

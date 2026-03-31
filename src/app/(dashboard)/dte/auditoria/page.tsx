@@ -1,8 +1,6 @@
 import { Alert, Button, Card, Col, Progress, Row, Space, Tag } from "antd";
-import { Search, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { DataTable } from "@/components/ui/DataTable";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatDate } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/error-message";
@@ -135,7 +133,7 @@ export default async function DteAuditoriaPage({
       <PageHeader
         eyebrow="DTE"
         title="Auditoria"
-        description="Actividad del superadmin, cambios de tenant y eventos del sistema en una sola lectura."
+        description="Eventos DTE compactos con filtros rapidos y lectura lateral."
         actions={
           <Tag
             bordered={false}
@@ -154,39 +152,39 @@ export default async function DteAuditoriaPage({
 
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Eventos" value={audit.total} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <StatBlock label="Eventos" value={audit.total} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Cargados" value={totalLoaded} accentVar="--section-dte" icon={<Search size={18} />} />
+          <StatBlock label="Cargados" value={totalLoaded} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Superadmin" value={superadmins} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <StatBlock label="Superadmin" value={superadmins} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Tenants tocados" value={tenants} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <StatBlock label="Tenants tocados" value={tenants} />
         </Col>
       </Row>
 
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={16}>
           <Card className="surface-card border-0" title={<SectionLabel>Registro de auditoria</SectionLabel>}>
-            <Space wrap size={10} style={{ width: "100%", marginBottom: 16 }}>
-              <Button href="/dte/auditoria" type={!actorTipo && !accion && !tenantId ? "primary" : "default"}>
+            <Space wrap size={8} style={{ width: "100%", marginBottom: 12 }}>
+              <Button size="small" href="/dte/auditoria" type={!actorTipo && !accion && !tenantId ? "primary" : "default"}>
                 Todo
               </Button>
-              <Button href={filterButtonHref("/dte/auditoria", { actor_tipo: "superadmin", accion, tenant_id: tenantId?.toString() })} type={actorTipo === "superadmin" ? "primary" : "default"}>
+              <Button size="small" href={filterButtonHref("/dte/auditoria", { actor_tipo: "superadmin", accion, tenant_id: tenantId?.toString() })} type={actorTipo === "superadmin" ? "primary" : "default"}>
                 Superadmin
               </Button>
-              <Button href={filterButtonHref("/dte/auditoria", { actor_tipo: "sistema", accion, tenant_id: tenantId?.toString() })} type={actorTipo === "sistema" ? "primary" : "default"}>
+              <Button size="small" href={filterButtonHref("/dte/auditoria", { actor_tipo: "sistema", accion, tenant_id: tenantId?.toString() })} type={actorTipo === "sistema" ? "primary" : "default"}>
                 Sistema
               </Button>
-              <Button href={filterButtonHref("/dte/auditoria", { actor_tipo: actorTipo, accion: "tenant", tenant_id: tenantId?.toString() })}>
+              <Button size="small" href={filterButtonHref("/dte/auditoria", { actor_tipo: actorTipo, accion: "tenant", tenant_id: tenantId?.toString() })}>
                 Tenant
               </Button>
-              <Button href={filterButtonHref("/dte/auditoria", { actor_tipo: actorTipo, accion: "plan", tenant_id: tenantId?.toString() })}>
+              <Button size="small" href={filterButtonHref("/dte/auditoria", { actor_tipo: actorTipo, accion: "plan", tenant_id: tenantId?.toString() })}>
                 Plan
               </Button>
-              <Button href={filterButtonHref("/dte/auditoria", { actor_tipo: actorTipo, accion: "backup", tenant_id: tenantId?.toString() })}>
+              <Button size="small" href={filterButtonHref("/dte/auditoria", { actor_tipo: actorTipo, accion: "backup", tenant_id: tenantId?.toString() })}>
                 Backup
               </Button>
             </Space>
@@ -211,24 +209,15 @@ export default async function DteAuditoriaPage({
           <Card className="surface-card border-0" title={<SectionLabel>Lectura del filtro</SectionLabel>}>
             <div className="space-y-4">
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                   <span style={{ color: "hsl(var(--text-secondary))", fontWeight: 600 }}>Cobertura</span>
                   <span style={{ color: "hsl(var(--text-primary))", fontWeight: 700 }}>{visiblePercent}%</span>
                 </div>
                 <Progress percent={visiblePercent} strokeColor="hsl(var(--section-dte))" showInfo={false} />
               </div>
 
-              <div
-                style={{
-                  padding: "1rem",
-                  borderRadius: 16,
-                  background: "hsl(var(--bg-subtle))",
-                  border: "1px solid hsl(var(--border-default))",
-                  lineHeight: 1.7,
-                  color: "hsl(var(--text-muted))",
-                }}
-              >
-                Esta vista reemplaza el log de ejemplo por el feed real del backend. Desde aqui se puede acotar por tipo de actor o por familia de accion sin salir del panel central.
+              <div style={{ padding: "0.85rem 0.95rem", borderRadius: 14, background: "hsl(var(--bg-subtle))", border: "1px solid hsl(var(--border-default))", lineHeight: 1.55, color: "hsl(var(--text-muted))", fontSize: 13 }}>
+                Filtros por actor y accion sin salir del panel.
               </div>
 
               <div

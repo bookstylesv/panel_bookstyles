@@ -2,7 +2,6 @@ import { Alert, Card, Col, Progress, Row, Tag } from "antd";
 import { BarChart3, Coins, ShieldCheck, TrendingUp, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { DataTable } from "@/components/ui/DataTable";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/error-message";
@@ -69,7 +68,7 @@ export default async function DteAnalyticsPage() {
       <PageHeader
         eyebrow="DTE"
         title="Analytics"
-        description="Ingreso, crecimiento, activaciones y distribucion por plan del panel DTE."
+        description="KPIs compactos de ingreso, activaciones y distribucion DTE."
         actions={
           <Tag
             bordered={false}
@@ -88,16 +87,16 @@ export default async function DteAnalyticsPage() {
 
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Ingreso YTD" value={formatCurrency(analytics.kpis.ingreso_ytd)} accentVar="--section-dte" icon={<Coins size={18} />} />
+          <InfoBlock label="Ingreso YTD" value={formatCurrency(analytics.kpis.ingreso_ytd)} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Nuevos mes" value={formatNumber(analytics.kpis.nuevos_mes)} accentVar="--section-dte" icon={<Users size={18} />} />
+          <InfoBlock label="Nuevos mes" value={formatNumber(analytics.kpis.nuevos_mes)} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Activaciones" value={formatNumber(analytics.kpis.activaciones_mes)} accentVar="--section-dte" icon={<TrendingUp size={18} />} />
+          <InfoBlock label="Activaciones" value={formatNumber(analytics.kpis.activaciones_mes)} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Suspensiones" value={formatNumber(analytics.kpis.suspensiones_mes)} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <InfoBlock label="Suspensiones" value={formatNumber(analytics.kpis.suspensiones_mes)} />
         </Col>
       </Row>
 
@@ -139,17 +138,8 @@ export default async function DteAnalyticsPage() {
                 <Progress percent={activeRate} strokeColor="hsl(var(--section-dte))" showInfo={false} />
               </div>
 
-              <div
-                style={{
-                  padding: "1rem",
-                  borderRadius: 16,
-                  background: "hsl(var(--bg-subtle))",
-                  border: "1px solid hsl(var(--border-default))",
-                  lineHeight: 1.7,
-                  color: "hsl(var(--text-muted))",
-                }}
-              >
-                La lectura analitica original mostraba el pulso economico del superadmin: crecimiento, activaciones y salud del portafolio. Aqui ya se consume el contrato real para que el panel deje de depender de calculos simulados.
+              <div style={{ padding: "0.85rem 0.95rem", borderRadius: 14, background: "hsl(var(--bg-subtle))", border: "1px solid hsl(var(--border-default))", lineHeight: 1.55, color: "hsl(var(--text-muted))", fontSize: 13 }}>
+                Movimiento MoM y plan dominante, sin texto de relleno.
               </div>
 
               <Alert
@@ -220,32 +210,6 @@ export default async function DteAnalyticsPage() {
               })}
               emptyState="No hay estados disponibles."
             />
-          </Card>
-        </Col>
-      </Row>
-
-      <Row gutter={[16, 16]}>
-        <Col xs={24}>
-          <Card className="surface-card border-0">
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-              <BarChart3 size={18} color="hsl(var(--section-dte))" />
-              <div>
-                <div style={{ color: "hsl(var(--text-primary))", fontSize: 16, fontWeight: 700 }}>Lectura operativa</div>
-                <div style={{ color: "hsl(var(--text-muted))", fontSize: 13 }}>Resumen rapido para decidir sin entrar a cada tenant.</div>
-              </div>
-            </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(16rem, 1fr))",
-                gap: 12,
-              }}
-            >
-              <InfoBlock label="Ingreso anual" value={formatCurrency(analytics.kpis.ingreso_ytd)} />
-              <InfoBlock label="Nuevos del mes" value={formatNumber(analytics.kpis.nuevos_mes)} />
-              <InfoBlock label="Activaciones" value={formatNumber(analytics.kpis.activaciones_mes)} />
-              <InfoBlock label="Suspensiones" value={formatNumber(analytics.kpis.suspensiones_mes)} />
-            </div>
           </Card>
         </Col>
       </Row>

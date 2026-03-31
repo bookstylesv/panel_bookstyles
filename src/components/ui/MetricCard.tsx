@@ -41,8 +41,8 @@ export function MetricCard({
           display: "flex",
           minHeight: "100%",
           flexDirection: "column",
-          gap: "0.75rem",
-          padding: "1rem 1rem 0.95rem",
+          gap: "0.5rem",
+          padding: "0.8rem 0.9rem 0.82rem",
         },
       }}
     >
@@ -68,8 +68,8 @@ export function MetricCard({
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "2.4rem",
-              height: "2.4rem",
+              width: "2rem",
+              height: "2rem",
               borderRadius: "999px",
               background: `hsl(var(${colorVar}) / 0.12)`,
             }}
@@ -88,7 +88,7 @@ export function MetricCard({
           suffix={suffix}
           valueStyle={{
             color: `hsl(var(${colorVar}))`,
-            fontSize: "1.95rem",
+            fontSize: "1.55rem",
             lineHeight: 1,
             letterSpacing: "-0.04em",
           }}
@@ -99,7 +99,7 @@ export function MetricCard({
           style={{
             color: `hsl(var(${colorVar}))`,
             fontFamily: "var(--font-display)",
-            fontSize: "1.5rem",
+            fontSize: "1.2rem",
             lineHeight: 1.1,
             letterSpacing: "-0.03em",
             fontWeight: 700,

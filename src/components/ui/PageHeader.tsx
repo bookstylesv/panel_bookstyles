@@ -14,7 +14,7 @@ export function PageHeader({
 }) {
   return (
     <div className="page-header">
-      <div className="page-header__copy" style={{ minWidth: 0, flex: "1 1 28rem" }}>
+      <div className="page-header__copy" style={{ minWidth: 0, flex: "1 1 24rem" }}>
         <Tag
           bordered={false}
           className="page-header__eyebrow"
@@ -23,12 +23,12 @@ export function PageHeader({
             background: "hsl(var(--accent-soft) / 0.6)",
             color: "hsl(var(--accent-strong))",
             borderRadius: 999,
-            paddingInline: 10,
+            paddingInline: 8,
             fontWeight: 700,
-            letterSpacing: "0.1em",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
-            fontSize: 11,
-            lineHeight: "22px",
+            fontSize: 10,
+            lineHeight: "20px",
           }}
         >
           {eyebrow}

@@ -1070,8 +1070,8 @@ select {
 }
 
 .control-dashboard__topbar-inner {
-  min-height: 64px;
-  padding: 12px 16px;
+  min-height: 56px;
+  padding: 8px 12px;
   border: 1px solid hsl(var(--border-default) / 0.88);
   border-radius: var(--radius-lg);
   background: hsl(var(--bg-surface) / 0.84);
@@ -1080,25 +1080,16 @@ select {
   box-shadow: var(--shadow-sm);
 }
 
-.control-dashboard__path {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid hsl(var(--border-default));
-  background: hsl(var(--bg-surface));
-}
-
 .control-dashboard__user {
   box-shadow: var(--shadow-sm);
 }
 
 .control-dashboard__content {
-  padding-top: 14px !important;
+  padding-top: 10px !important;
 }
 
 .control-dashboard__frame {
-  max-width: 1560px;
+  max-width: 1480px;
   margin: 0 auto;
 }
 
@@ -1116,11 +1107,11 @@ select {
 }
 
 .control-dashboard .panel-sider__mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   background: var(--gradient-brand);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
 }
 
 .control-dashboard .panel-sider__eyebrow {
@@ -1133,11 +1124,11 @@ select {
 .control-dashboard .panel-sider__caption {
   margin: 2px 0 0 0;
   color: hsl(var(--sidebar-muted));
-  font-size: 10px;
+  font-size: 9px;
 }
 
 .control-dashboard .panel-sider__profile {
-  padding: 0.8rem 0.85rem;
+  padding: 0.7rem 0.8rem;
   background: hsl(var(--bg-sidebar-elevated) / 0.62);
   border: 1px solid hsl(var(--sidebar-border));
   border-radius: 12px;
@@ -1154,12 +1145,12 @@ select {
 
 .control-dashboard .panel-sider .ant-menu-submenu-title,
 .control-dashboard .panel-sider .ant-menu-item {
-  min-height: 2.65rem;
+  min-height: 2.35rem;
   margin-inline: 0 !important;
-  margin-block: 0.18rem !important;
-  padding-top: 0.55rem !important;
-  padding-bottom: 0.55rem !important;
-  border-radius: 10px !important;
+  margin-block: 0.12rem !important;
+  padding-top: 0.4rem !important;
+  padding-bottom: 0.4rem !important;
+  border-radius: 9px !important;
 }
 
 .control-dashboard .panel-sider .ant-menu-submenu-title:hover,
@@ -1179,8 +1170,8 @@ select {
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
   padding: 0;
   border: none;
   background: transparent;
@@ -1196,25 +1187,25 @@ select {
 }
 
 .control-dashboard .page-header__title {
-  margin: 0.8rem 0 0.3rem;
-  font-size: clamp(1.95rem, 2.7vw, 2.45rem);
-  line-height: 0.98;
-  letter-spacing: -0.05em;
+  margin: 0.55rem 0 0.18rem;
+  font-size: clamp(1.45rem, 2vw, 1.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
   color: hsl(var(--text-primary));
 }
 
 .control-dashboard .page-header__description {
   margin: 0;
-  max-width: 760px;
+  max-width: 640px;
   color: hsl(var(--text-muted));
-  font-size: 0.95rem;
-  line-height: 1.55;
+  font-size: 0.85rem;
+  line-height: 1.45;
 }
 
 .control-dashboard .page-header__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem;
   justify-content: flex-end;
 }
 
@@ -1234,11 +1225,11 @@ select {
   align-items: center;
   gap: 0.5rem;
   color: hsl(var(--text-secondary));
-  font-size: 0.76rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  line-height: 1.35;
+  line-height: 1.2;
 }
 
 .control-dashboard .metric-card__dot {
@@ -1250,10 +1241,10 @@ select {
 
 .control-dashboard .metric-card__hint {
   margin: 0;
-  min-height: 2.8em;
+  min-height: 0;
   color: hsl(var(--text-muted));
-  font-size: 0.83rem;
-  line-height: 1.45;
+  font-size: 0.74rem;
+  line-height: 1.35;
 }
 
 .control-dashboard .metric-card__value .ant-statistic-content,
@@ -1262,13 +1253,27 @@ select {
   align-items: baseline;
   gap: 0.4rem;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 3vw, 2.4rem);
-  line-height: 0.94;
+  font-size: clamp(1.45rem, 1.8vw, 1.8rem);
+  line-height: 1;
   letter-spacing: -0.06em;
 }
 
 .control-dashboard .metric-card__icon {
   box-shadow: inset 0 0 0 1px hsl(var(--border-default) / 0.48);
+}
+
+.control-dashboard .surface-card .ant-card-head {
+  min-height: 44px;
+  padding-inline: 14px;
+}
+
+.control-dashboard .surface-card .ant-card-head-title {
+  padding-block: 10px;
+  font-size: 0.95rem;
+}
+
+.control-dashboard .surface-card .ant-card-body {
+  padding: 14px;
 }
 
 .control-dashboard .data-table-shell {

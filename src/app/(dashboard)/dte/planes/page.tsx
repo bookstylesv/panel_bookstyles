@@ -36,7 +36,7 @@ export default async function DtePlanesPage() {
       <PageHeader
         eyebrow="DTE"
         title="Planes DTE"
-        description="Consulta server-side del catalogo de planes de factura-dte."
+        description="Catalogo server-side de planes DTE."
       />
       <Card className="surface-card border-0" title={<SectionLabel>Catalogo de planes</SectionLabel>}>
         <DataTable

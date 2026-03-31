@@ -1,10 +1,8 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Alert, Card, Col, Row, Tag } from "antd";
 import { DataTable } from "@/components/ui/DataTable";
-import { MetricCard } from "@/components/ui/MetricCard";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { formatDateOnly, formatNumber } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/error-message";
-import { formatDateOnly } from "@/lib/formatters";
 import { getErpTenants } from "@/lib/integrations/erp";
 
 async function loadErpTenants() {
@@ -16,13 +14,35 @@ async function loadErpTenants() {
   }
 }
 
+function MiniStatCard({ title, value, hint, accent }: { title: string; value: string | number; hint: string; accent: string }) {
+  return (
+    <Card className="surface-card border-0" styles={{ body: { padding: 12, minHeight: 96, borderTop: `3px solid ${accent}` } }}>
+      <div style={{ color: "hsl(var(--text-secondary))", fontSize: 11.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>{title}</div>
+      <div style={{ color: "hsl(var(--text-primary))", fontSize: "clamp(1.35rem, 2vw, 1.75rem)", fontWeight: 800, lineHeight: 1, marginTop: 6 }}>{value}</div>
+      <div style={{ color: "hsl(var(--text-muted))", fontSize: 12, marginTop: 6, lineHeight: 1.35 }}>{hint}</div>
+    </Card>
+  );
+}
+
 export default async function ErpTenantsPage() {
   const result = await loadErpTenants();
 
   if ("error" in result) {
     return (
-      <div className="space-y-6">
-        <PageHeader eyebrow="ERP" title="Tenants ERP Full Pro" description="El listado quedara disponible cuando ERP exponga `/api/superadmin/tenants`." />
+      <div className="space-y-4">
+        <Card className="surface-card border-0" styles={{ body: { padding: 14 } }}>
+          <div style={{ display: "grid", gap: 8 }}>
+            <Tag bordered={false} style={{ margin: 0, width: "fit-content", borderRadius: 999, paddingInline: "0.75rem", background: "hsl(var(--section-erp) / 0.12)", color: "hsl(var(--section-erp))", fontWeight: 700 }}>
+              ERP
+            </Tag>
+            <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.5rem, 2.3vw, 1.9rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}>
+              Tenants ERP Full Pro
+            </h1>
+            <p style={{ margin: 0, maxWidth: 640, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
+              Listado compacto para revisar estado y vencimiento cuando ERP exponga el contrato superadmin.
+            </p>
+          </div>
+        </Card>
         <Alert type="warning" showIcon message="ERP aun no responde al contrato superadmin" description={result.error} />
       </div>
     );
@@ -34,44 +54,37 @@ export default async function ErpTenantsPage() {
   const suspended = result.tenants.items.filter((row) => row.status !== "ACTIVE" && row.status !== "TRIAL").length;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="ERP"
-        title="Tenants ERP Full Pro"
-        description="Listado multi-tenant centralizado del ERP con lectura de estado y vencimiento."
-        actions={
-          <Tag
-            bordered={false}
-            style={{
-              margin: 0,
-              borderRadius: 999,
-              paddingInline: "0.85rem",
-              background: "hsl(var(--section-erp) / 0.12)",
-              color: "hsl(var(--section-erp))",
-              fontWeight: 700,
-            }}
-          >
-            {total} tenants
+    <div className="space-y-4">
+      <Card className="surface-card border-0" styles={{ body: { padding: 14 } }}>
+        <div style={{ display: "grid", gap: 8 }}>
+          <Tag bordered={false} style={{ margin: 0, width: "fit-content", borderRadius: 999, paddingInline: "0.75rem", background: "hsl(var(--section-erp) / 0.12)", color: "hsl(var(--section-erp))", fontWeight: 700 }}>
+            ERP
           </Tag>
-        }
-      />
+          <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.5rem, 2.3vw, 1.9rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}>
+            Tenants ERP Full Pro
+          </h1>
+          <p style={{ margin: 0, maxWidth: 640, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
+            Listado centralizado del ERP con una lectura mas compacta de estado y vencimiento.
+          </p>
+        </div>
+      </Card>
 
-      <Row gutter={[16, 16]}>
+      <Row gutter={[12, 12]}>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Total" value={total} accentVar="--section-erp" hint="Tenants registrados en ERP" />
+          <MiniStatCard title="Total" value={formatNumber(total)} hint="Tenants registrados" accent="hsl(var(--section-erp))" />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Activos" value={active} accentVar="--section-erp" tone="success" />
+          <MiniStatCard title="Activos" value={formatNumber(active)} hint="Con servicio disponible" accent="hsl(var(--status-success))" />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Trial" value={trial} accentVar="--section-erp" tone="warning" />
+          <MiniStatCard title="Trial" value={formatNumber(trial)} hint="En periodo de prueba" accent="hsl(var(--status-warning))" />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Suspendidos" value={suspended} accentVar="--section-erp" tone="danger" />
+          <MiniStatCard title="Suspendidos" value={formatNumber(suspended)} hint="Requieren revision" accent="hsl(var(--status-error))" />
         </Col>
       </Row>
 
-      <Card className="surface-card border-0">
+      <Card className="surface-card border-0" styles={{ body: { padding: 12 } }}>
         <DataTable
           caption="Registro multi-tenant ERP"
           columns={[
@@ -98,11 +111,7 @@ export default async function ErpTenantsPage() {
             return {
               key: String(row.id),
               cells: [
-                <Link
-                  key={`link-${row.id}`}
-                  href={`/erp/tenants/${row.id}`}
-                  style={{ color: "hsl(var(--section-erp))", fontWeight: 700 }}
-                >
+                <Link key={`link-${row.id}`} href={`/erp/tenants/${row.id}`} style={{ color: "hsl(var(--section-erp))", fontWeight: 700 }}>
                   {row.name}
                 </Link>,
                 row.slug,

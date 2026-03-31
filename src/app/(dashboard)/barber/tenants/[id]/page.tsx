@@ -1,10 +1,45 @@
 import { Alert, Card, Col, Descriptions, Row, Tag } from "antd";
-import { MetricCard } from "@/components/ui/MetricCard";
-import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDate } from "@/lib/formatters";
 import { getBarberTenant } from "@/lib/integrations/barber";
 import { BarberTenantActions } from "@/components/barber/BarberTenantActions";
+
+function CompactStat({
+  label,
+  value,
+  tone,
+  hint,
+}: {
+  label: string;
+  value: string | number;
+  tone: "section" | "success" | "warning" | "danger" | "neutral";
+  hint?: string;
+}) {
+  const accent =
+    tone === "success"
+      ? "hsl(var(--status-success))"
+      : tone === "warning"
+        ? "hsl(var(--status-warning))"
+        : tone === "danger"
+          ? "hsl(var(--status-error))"
+          : tone === "neutral"
+            ? "hsl(var(--text-secondary))"
+            : "hsl(var(--section-barber))";
+
+  return (
+    <Card className="surface-card border-0" styles={{ body: { padding: "0.8rem 0.9rem" } }}>
+      <div style={{ display: "grid", gap: 4 }}>
+        <div style={{ color: "hsl(var(--text-muted))", fontSize: 11, fontWeight: 700 }}>{label}</div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+          <div style={{ color: accent, fontSize: "clamp(1.2rem, 1.8vw, 1.5rem)", fontWeight: 800, lineHeight: 1 }}>
+            {value}
+          </div>
+          {hint ? <span style={{ color: "hsl(var(--text-muted))", fontSize: 11.5 }}>{hint}</span> : null}
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 async function loadBarberTenant(id: string) {
   try {
@@ -25,8 +60,18 @@ export default async function BarberTenantDetailPage({
 
   if ("error" in result) {
     return (
-      <div className="space-y-6">
-        <PageHeader eyebrow="Barber" title="Detalle Barber Pro" description={`No se pudo abrir el tenant ${id}.`} />
+      <div className="space-y-4">
+        <div>
+          <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+            Barber
+          </div>
+          <h1 style={{ margin: "0.35rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
+            Detalle Barber Pro
+          </h1>
+          <p style={{ margin: "0.25rem 0 0", color: "hsl(var(--text-muted))", fontSize: 13 }}>
+            No se pudo abrir el tenant {id}.
+          </p>
+        </div>
         <Alert type="error" showIcon message="Fallo la integracion" description={result.error} />
       </div>
     );
@@ -35,58 +80,49 @@ export default async function BarberTenantDetailPage({
   const { tenant } = result;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Barber"
-        title={tenant.name}
-        description="Detalle del tenant Barber Pro con capacidad operativa y consumo base."
-        actions={<BarberTenantActions tenantId={tenant.id} status={tenant.status} />}
-      />
-      <Row gutter={[16, 16]}>
+    <div className="space-y-4">
+      <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+            Barber
+          </div>
+          <h1 style={{ margin: "0.35rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
+            {tenant.name}
+          </h1>
+          <p style={{ margin: "0.25rem 0 0", color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.45 }}>
+            Detalle operativo del tenant Barber Pro.
+          </p>
+        </div>
+        <BarberTenantActions tenantId={tenant.id} status={tenant.status} />
+      </div>
+
+      <Row gutter={[12, 12]}>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Estado"
-            value={tenant.status}
-            accentVar="--section-barber"
-            tone={tenant.status === "ACTIVE" ? "success" : tenant.status === "TRIAL" ? "warning" : "danger"}
-            hint="Estado operativo actual"
-          />
+          <CompactStat label="Estado" value={tenant.status} tone={tenant.status === "ACTIVE" ? "success" : tenant.status === "TRIAL" ? "warning" : "danger"} hint="Operativo" />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Plan"
-            value={tenant.plan}
-            accentVar="--section-barber"
-            tone="section"
-            hint="Suscripcion asignada al tenant"
-          />
+          <CompactStat label="Plan" value={tenant.plan} tone="section" hint="Suscripcion" />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Max barberos"
-            value={tenant.maxBarbers}
-            accentVar="--section-barber"
-            tone="neutral"
-            hint="Capacidad configurada para el tenant"
-          />
+          <CompactStat label="Max barberos" value={tenant.maxBarbers} tone="neutral" hint="Capacidad" />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Actividad"
+          <CompactStat
+            label="Actividad"
             value={tenant._count.users + tenant._count.barbers + tenant._count.appointments}
-            accentVar="--section-barber"
             tone="section"
-            hint={`${tenant._count.users} usuarios, ${tenant._count.barbers} barberos y ${tenant._count.appointments} citas`}
+            hint={`${tenant._count.users} usuarios, ${tenant._count.barbers} barberos, ${tenant._count.appointments} citas`}
           />
         </Col>
       </Row>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[12, 12]}>
         <Col xs={24} xl={14}>
           <Card
             className="surface-card border-0"
-            title={<span className="text-sm font-semibold text-[hsl(var(--text-secondary))]">Perfil operativo</span>}
+            styles={{ body: { padding: "0.9rem 1rem 1rem" } }}
+            title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Perfil operativo</span>}
           >
-            <Descriptions bordered column={1}>
+            <Descriptions bordered size="small" column={1}>
               <Descriptions.Item label="Slug">{tenant.slug}</Descriptions.Item>
               <Descriptions.Item label="Plan">{tenant.plan}</Descriptions.Item>
               <Descriptions.Item label="Estado">
@@ -104,9 +140,10 @@ export default async function BarberTenantDetailPage({
         <Col xs={24} xl={10}>
           <Card
             className="surface-card border-0"
-            title={<span className="text-sm font-semibold text-[hsl(var(--text-secondary))]">Consumo y sistema</span>}
+            styles={{ body: { padding: "0.9rem 1rem 1rem" } }}
+            title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Consumo y sistema</span>}
           >
-            <Descriptions bordered column={1}>
+            <Descriptions bordered size="small" column={1}>
               <Descriptions.Item label="Max barberos">{tenant.maxBarbers}</Descriptions.Item>
               <Descriptions.Item label="Usuarios">{tenant._count.users}</Descriptions.Item>
               <Descriptions.Item label="Barberos">{tenant._count.barbers}</Descriptions.Item>

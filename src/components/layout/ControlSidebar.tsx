@@ -113,7 +113,7 @@ export function ControlSidebar() {
 
   return (
     <Sider
-      width={244}
+      width={232}
       collapsedWidth={72}
       collapsed={collapsed}
       trigger={null}
@@ -139,9 +139,9 @@ export function ControlSidebar() {
               <div style={{ minWidth: 0 }}>
                 <p className="panel-sider__eyebrow">Speeddan Control</p>
                 <Text strong style={{ color: "hsl(var(--sidebar-fg))", fontSize: 14, display: "block", lineHeight: 1.15 }}>
-                  Panel central v3
+                  Panel central
                 </Text>
-                <p className="panel-sider__caption">Superadmin multi-sistema</p>
+                <p className="panel-sider__caption">Superadmin</p>
               </div>
             )}
           </div>
@@ -157,7 +157,7 @@ export function ControlSidebar() {
         </div>
 
         {/* Navigation */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "10px 10px 12px" }}>
+          <div style={{ flex: 1, overflowY: "auto", padding: "8px 10px 10px" }}>
           <Menu
             theme="dark"
             mode="inline"
@@ -177,7 +177,7 @@ export function ControlSidebar() {
 
         {/* User footer */}
         <div style={{ padding: collapsed ? "8px 10px 14px" : "8px 14px 16px" }}>
-          <Divider style={{ margin: "0 0 12px", borderColor: "hsl(var(--sidebar-border))" }} />
+          <Divider style={{ margin: "0 0 10px", borderColor: "hsl(var(--sidebar-border))" }} />
           <div className="panel-sider__profile">
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <Avatar
@@ -197,7 +197,7 @@ export function ControlSidebar() {
                   <div className="panel-sider__profile-label" style={{ fontSize: 13 }}>
                     {session?.username ?? "Superadmin"}
                   </div>
-                  <div className="panel-sider__profile-meta">Sesion central segura</div>
+                  <div className="panel-sider__profile-meta">Sesion segura</div>
                 </div>
               )}
             </div>

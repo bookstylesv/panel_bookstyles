@@ -1,7 +1,6 @@
 import { Alert, Card, Col, Progress, Row, Tag } from "antd";
 import { Map, MapPinned } from "lucide-react";
 import type { ReactNode } from "react";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DataTable } from "@/components/ui/DataTable";
 import { formatNumber } from "@/lib/formatters";
@@ -19,6 +18,15 @@ async function loadMap() {
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return <span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>{children}</span>;
+}
+
+function CompactStat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div style={{ borderRadius: 14, border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-surface))", padding: "0.8rem 0.9rem", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ color: "hsl(var(--text-muted))", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>{label}</div>
+      <div style={{ marginTop: 6, color: "hsl(var(--text-primary))", fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 800, lineHeight: 1.05 }}>{value}</div>
+    </div>
+  );
 }
 
 export default async function DteMapaPage() {
@@ -44,7 +52,7 @@ export default async function DteMapaPage() {
       <PageHeader
         eyebrow="DTE"
         title="Mapa"
-        description="Cobertura territorial del ecosistema DTE por departamento, con ubicaciones pendientes visibles."
+        description="Cobertura territorial compacta por departamento."
         actions={
           <Tag
             bordered={false}
@@ -63,16 +71,16 @@ export default async function DteMapaPage() {
 
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Tenants" value={map.total_tenants} accentVar="--section-dte" icon={<Map size={18} />} />
+          <CompactStat label="Tenants" value={map.total_tenants} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Sin ubicacion" value={map.sin_ubicacion} accentVar="--section-dte" icon={<MapPinned size={18} />} />
+          <CompactStat label="Sin ubicacion" value={map.sin_ubicacion} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Cobertura" value={`${coverageRate}%`} accentVar="--section-dte" icon={<MapPinned size={18} />} />
+          <CompactStat label="Cobertura" value={`${coverageRate}%`} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Activos" value={activeTotal} accentVar="--section-dte" icon={<MapPinned size={18} />} />
+          <CompactStat label="Activos" value={activeTotal} />
         </Col>
       </Row>
 
@@ -116,35 +124,19 @@ export default async function DteMapaPage() {
                 <Progress percent={coverageRate} strokeColor="hsl(var(--section-dte))" showInfo={false} />
               </div>
 
-              <div
-                style={{
-                  padding: "1rem",
-                  borderRadius: 16,
-                  background: "hsl(var(--bg-subtle))",
-                  border: "1px solid hsl(var(--border-default))",
-                  lineHeight: 1.7,
-                  color: "hsl(var(--text-muted))",
-                }}
-              >
-                El mapa del panel original se usaba para entender donde estaban concentrados los tenants y donde faltaba informacion. Aqui la misma lectura ya sale del backend y deja claro el gap de ubicacion.
+              <div style={{ padding: "0.85rem 0.95rem", borderRadius: 14, background: "hsl(var(--bg-subtle))", border: "1px solid hsl(var(--border-default))", lineHeight: 1.55, color: "hsl(var(--text-muted))", fontSize: 13 }}>
+                Lectura rapida del gap de ubicacion.
               </div>
 
               {topDepartment ? (
-                <div
-                  style={{
-                    padding: "1rem",
-                    borderRadius: 16,
-                    border: "1px solid hsl(var(--border-default))",
-                    background: "hsl(var(--bg-surface))",
-                  }}
-                >
-                  <div style={{ color: "hsl(var(--text-muted))", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                <div style={{ padding: "0.85rem 0.95rem", borderRadius: 14, border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-surface))" }}>
+                  <div style={{ color: "hsl(var(--text-muted))", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                     Departamento dominante
                   </div>
-                  <div style={{ marginTop: 8, color: "hsl(var(--text-primary))", fontSize: 18, fontWeight: 700 }}>
+                  <div style={{ marginTop: 6, color: "hsl(var(--text-primary))", fontSize: 16, fontWeight: 700 }}>
                     {topDepartment.nombre}
                   </div>
-                  <div style={{ marginTop: 4, color: "hsl(var(--text-muted))", fontSize: 13 }}>
+                  <div style={{ marginTop: 4, color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.5 }}>
                     {formatNumber(topDepartment.total)} tenants, {formatNumber(topDepartment.activos)} activos, {formatNumber(topDepartment.suspendidos)} suspendidos.
                   </div>
                 </div>
@@ -166,16 +158,16 @@ export default async function DteMapaPage() {
                   <div
                     key={label}
                     style={{
-                      borderRadius: 16,
+                      borderRadius: 14,
                       border: "1px solid hsl(var(--border-default))",
                       background: "hsl(var(--bg-subtle))",
-                      padding: "0.9rem",
+                      padding: "0.8rem 0.9rem",
                     }}
                   >
-                    <div style={{ color: "hsl(var(--text-muted))", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                    <div style={{ color: "hsl(var(--text-muted))", fontSize: 10, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       {label}
                     </div>
-                    <div style={{ marginTop: 8, color: "hsl(var(--text-primary))", fontSize: 20, fontWeight: 800 }}>
+                    <div style={{ marginTop: 6, color: "hsl(var(--text-primary))", fontSize: 18, fontWeight: 800 }}>
                       {value}
                     </div>
                   </div>

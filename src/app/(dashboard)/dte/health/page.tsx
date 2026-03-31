@@ -1,7 +1,6 @@
 import { Alert, Card, Col, Descriptions, Progress, Row, Tag } from "antd";
 import { Activity, Cpu, Database, Gauge, Server, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDate, formatNumber } from "@/lib/formatters";
@@ -33,6 +32,15 @@ function SectionLabel({ children }: { children: ReactNode }) {
   return <span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>{children}</span>;
 }
 
+function CompactStat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div style={{ borderRadius: 14, border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-surface))", padding: "0.8rem 0.9rem", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ color: "hsl(var(--text-muted))", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>{label}</div>
+      <div style={{ marginTop: 6, color: "hsl(var(--text-primary))", fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 800, lineHeight: 1.05 }}>{value}</div>
+    </div>
+  );
+}
+
 export default async function DteHealthPage() {
   const result = await loadDteHealth();
 
@@ -55,7 +63,7 @@ export default async function DteHealthPage() {
       <PageHeader
         eyebrow="DTE"
         title="Health DTE"
-        description="Lectura operativa del backend superadmin: base de datos, proceso, pool y estado de tenants."
+        description="Semaforo tecnico del backend DTE en una vista corta."
         actions={
           <Tag
             bordered={false}
@@ -74,16 +82,16 @@ export default async function DteHealthPage() {
 
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Estado" value={health.status.toUpperCase()} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <CompactStat label="Estado" value={health.status.toUpperCase()} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Latencia" value={`${formatNumber(latency)} ms`} accentVar="--section-dte" icon={<Gauge size={18} />} />
+          <CompactStat label="Latencia" value={`${formatNumber(latency)} ms`} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Pool usado" value={`${poolPercent}%`} accentVar="--section-dte" icon={<Database size={18} />} />
+          <CompactStat label="Pool usado" value={`${poolPercent}%`} />
         </Col>
         <Col xs={24} sm={12} xl={6}>
-          <MetricCard title="Uptime" value={formatUptime(health.process.uptime_seconds)} accentVar="--section-dte" icon={<Cpu size={18} />} />
+          <CompactStat label="Uptime" value={formatUptime(health.process.uptime_seconds)} />
         </Col>
       </Row>
 
@@ -150,7 +158,7 @@ export default async function DteHealthPage() {
                 type={health.status === "ok" ? "success" : health.status === "degraded" ? "warning" : "error"}
                 showIcon
                 message={health.status === "ok" ? "Servicio estable" : "Requiere revision"}
-                description="Usa esta vista como semaforo rapido antes de entrar a clientes, planes o auditoria."
+                description="Lectura rapida antes de abrir clientes, planes o auditoria."
               />
             </div>
           </Card>
@@ -160,12 +168,12 @@ export default async function DteHealthPage() {
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={10}>
           <Card className="surface-card border-0" title={<SectionLabel>Tenants del contrato</SectionLabel>}>
-            <div style={{ display: "grid", gap: 12 }}>
-              <MetricCard title="Total" value={health.tenants.total} accentVar="--section-dte" icon={<Activity size={18} />} />
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>
-                <MetricCard title="Activos" value={health.tenants.activos} accentVar="--section-dte" />
-                <MetricCard title="Pruebas" value={health.tenants.en_pruebas} accentVar="--section-dte" />
-                <MetricCard title="Suspendidos" value={health.tenants.suspendidos} accentVar="--section-dte" />
+            <div style={{ display: "grid", gap: 10 }}>
+              <CompactStat label="Total" value={health.tenants.total} />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
+                <CompactStat label="Activos" value={health.tenants.activos} />
+                <CompactStat label="Pruebas" value={health.tenants.en_pruebas} />
+                <CompactStat label="Suspendidos" value={health.tenants.suspendidos} />
               </div>
             </div>
           </Card>
@@ -173,17 +181,8 @@ export default async function DteHealthPage() {
 
         <Col xs={24} xl={14}>
           <Card className="surface-card border-0" title={<SectionLabel>Lectura operativa</SectionLabel>}>
-            <div
-              style={{
-                borderRadius: "1rem",
-                border: "1px solid hsl(var(--border-default))",
-                background: "hsl(var(--bg-subtle))",
-                padding: "1rem",
-                color: "hsl(var(--text-muted))",
-                lineHeight: 1.7,
-              }}
-            >
-              Este modulo replica la lectura que tenia el superadmin original: estado del servicio, carga de base, memoria del proceso y volumen de tenants. Cuando entre la telemetria extendida, aqui se pueden sumar version del backend, latencia por endpoint y alertas de pool.
+            <div style={{ borderRadius: 14, border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-subtle))", padding: "0.85rem 0.95rem", color: "hsl(var(--text-muted))", lineHeight: 1.55, fontSize: 13 }}>
+              Estado general y carga del proceso sin texto de relleno.
             </div>
             <div style={{ marginTop: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>

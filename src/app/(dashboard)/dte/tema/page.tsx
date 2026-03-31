@@ -20,7 +20,7 @@ export default function DteTemaPage() {
       <PageHeader
         eyebrow="DTE"
         title="Tema"
-        description="El panel central usa un tema compartido por variables CSS. El tema por tenant vive en el detalle del cliente, no en esta vista."
+        description="Tema global por variables CSS y aislamiento por tenant."
         actions={<Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--accent-soft))", color: "hsl(var(--accent-strong))", fontWeight: 700 }}>Sistema compartido</Tag>}
       />
 
@@ -42,8 +42,8 @@ export default function DteTemaPage() {
                   </div>
                   <div>
                     <div style={{ fontWeight: 800, color: "hsl(var(--text-primary))", fontSize: 16 }}>Variables globales</div>
-                    <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.6 }}>
-                      La composicion visual se gobierna desde CSS vars y Ant Design tokens. Eso mantiene el panel coherente con Barber Pro y ERP Full Pro.
+                    <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.5 }}>
+                      CSS vars y tokens Ant Design sostienen el panel.
                     </div>
                   </div>
                 </div>
@@ -77,14 +77,14 @@ export default function DteTemaPage() {
                   padding: "1.1rem",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
                   <div style={{ width: 46, height: 46, borderRadius: 16, display: "grid", placeItems: "center", background: "hsl(var(--section-dte) / 0.12)", color: "hsl(var(--section-dte))" }}>
                     <Palette size={18} />
                   </div>
                   <div>
                     <div style={{ fontWeight: 800, color: "hsl(var(--text-primary))", fontSize: 16 }}>Aislamiento por cliente</div>
-                    <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.6 }}>
-                      La paleta por tenant es un atributo del workspace de cliente, no del panel central. Asi se conserva la identidad de cada software sin romper el control unificado.
+                    <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.5 }}>
+                      La paleta por tenant vive en el workspace del cliente.
                     </div>
                   </div>
                 </div>
@@ -102,17 +102,17 @@ export default function DteTemaPage() {
                     { label: "DTE", color: "hsl(var(--section-dte))" },
                     { label: "ERP", color: "hsl(var(--section-erp))" },
                   ].map((item) => (
-                    <div key={item.label} style={{ padding: "1rem", borderRadius: 16, border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-surface))" }}>
-                      <div style={{ width: 32, height: 32, borderRadius: 10, background: item.color, marginBottom: 12 }} />
+                    <div key={item.label} style={{ padding: "0.85rem", borderRadius: 14, border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-surface))" }}>
+                      <div style={{ width: 30, height: 30, borderRadius: 10, background: item.color, marginBottom: 10 }} />
                       <div style={{ fontWeight: 700, color: "hsl(var(--text-primary))" }}>{item.label}</div>
-                      <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.6 }}>Token de color semantico</div>
+                      <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.5 }}>Token de color semantico</div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.7, padding: "0.95rem 1rem", borderRadius: 16, background: "hsl(var(--bg-surface))", border: "1px solid hsl(var(--border-default))" }}>
-                Este modulo replica la intencion del original: separar el tema global del superadmin del tema individual de cada tenant, manteniendo un lenguaje visual coherente y controlado por variables.
+              <div style={{ color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.5, padding: "0.85rem 0.95rem", borderRadius: 14, background: "hsl(var(--bg-surface))", border: "1px solid hsl(var(--border-default))" }}>
+                Tema global y tema por tenant, sin capas extra.
               </div>
             </div>
           </Card>

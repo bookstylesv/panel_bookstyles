@@ -2,7 +2,6 @@ import { Alert, Card, Col, Input, Row, Tag } from "antd";
 import { Building2, Search, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { DataTable } from "@/components/ui/DataTable";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { getDteDepartamentos } from "@/lib/integrations/dte";
@@ -25,6 +24,15 @@ function readParam(value: string | string[] | undefined) {
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return <span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>{children}</span>;
+}
+
+function CompactStat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div style={{ borderRadius: 14, border: "1px solid hsl(var(--border-default))", background: "hsl(var(--bg-surface))", padding: "0.8rem 0.9rem", boxShadow: "var(--shadow-sm)" }}>
+      <div style={{ color: "hsl(var(--text-muted))", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>{label}</div>
+      <div style={{ marginTop: 6, color: "hsl(var(--text-primary))", fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 800, lineHeight: 1.05 }}>{value}</div>
+    </div>
+  );
 }
 
 export default async function DteDepartamentosPage({
@@ -54,29 +62,29 @@ export default async function DteDepartamentosPage({
       <PageHeader
         eyebrow="DTE"
         title="Departamentos"
-        description="Catalogo CAT-012 para la distribucion territorial del ecosistema y soporte de ubicacion en clientes."
+        description="Catalogo territorial CAT-012 en formato compacto."
         actions={<Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--accent-soft))", color: "hsl(var(--accent-strong))", fontWeight: 700 }}>CAT-012</Tag>}
       />
 
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Catalogo" value={result.departamentos.length} accentVar="--section-dte" icon={<Building2 size={18} />} />
+          <CompactStat label="Catalogo" value={result.departamentos.length} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Filtrados" value={departamentos.length} accentVar="--section-dte" icon={<Search size={18} />} />
+          <CompactStat label="Filtrados" value={departamentos.length} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Primer codigo" value={firstCode} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <CompactStat label="Primer codigo" value={firstCode} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Ultimo codigo" value={lastCode} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <CompactStat label="Ultimo codigo" value={lastCode} />
         </Col>
       </Row>
 
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={9}>
       <Card className="surface-card border-0" title={<SectionLabel>Filtro rapido</SectionLabel>}>
-            <form action="/dte/departamentos" method="get" style={{ display: "grid", gap: 12 }}>
+            <form action="/dte/departamentos" method="get" style={{ display: "grid", gap: 10 }}>
               <Input
                 name="q"
                 defaultValue={readParam(params.q)}
@@ -99,8 +107,8 @@ export default async function DteDepartamentosPage({
                 Aplicar filtro
               </button>
             </form>
-            <div style={{ marginTop: 16, color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.7 }}>
-              Este catalogo alimenta la configuracion de ubicaciones del cliente y los filtros de municipios. La informacion de uso real queda en el detalle del tenant, por eso esta pantalla es deliberadamente liviana y ordenada.
+            <div style={{ marginTop: 12, color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.5 }}>
+              Catalogo breve para ubicar clientes y municipios.
             </div>
           </Card>
         </Col>

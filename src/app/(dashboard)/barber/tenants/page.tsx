@@ -1,12 +1,47 @@
 import Link from "next/link";
 import { Alert, Card, Col, Row, Tag } from "antd";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { DataTable } from "@/components/ui/DataTable";
-import { PageHeader } from "@/components/ui/PageHeader";
 import { BarberTenantsSearch } from "@/components/barber/BarberTenantsSearch";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
 import { getBarberTenants } from "@/lib/integrations/barber";
+
+function CompactStat({
+  label,
+  value,
+  tone,
+  hint,
+}: {
+  label: string;
+  value: string | number;
+  tone: "section" | "success" | "warning" | "neutral";
+  hint?: string;
+}) {
+  const accent =
+    tone === "success"
+      ? "hsl(var(--status-success))"
+      : tone === "warning"
+        ? "hsl(var(--status-warning))"
+        : tone === "neutral"
+          ? "hsl(var(--text-secondary))"
+          : "hsl(var(--section-barber))";
+
+  return (
+    <Card className="surface-card border-0" styles={{ body: { padding: "0.8rem 0.9rem" } }}>
+      <div style={{ display: "grid", gap: 4 }}>
+        <div style={{ color: "hsl(var(--text-muted))", fontSize: 11, fontWeight: 700 }}>
+          {label}
+        </div>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+          <div style={{ color: accent, fontSize: "clamp(1.2rem, 1.8vw, 1.5rem)", fontWeight: 800, lineHeight: 1 }}>
+            {value}
+          </div>
+          {hint ? <span style={{ color: "hsl(var(--text-muted))", fontSize: 11.5 }}>{hint}</span> : null}
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 async function loadBarberTenants(search: string) {
   try {
@@ -28,8 +63,15 @@ export default async function BarberTenantsPage({
 
   if ("error" in result) {
     return (
-      <div className="space-y-6">
-        <PageHeader eyebrow="Barber" title="Tenants Barber Pro" description="No se pudo cargar el listado de barberias." />
+      <div className="space-y-4">
+        <div>
+          <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+            Barber
+          </div>
+          <h1 style={{ margin: "0.35rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
+            Tenants Barber Pro
+          </h1>
+        </div>
         <Alert type="error" showIcon message="Fallo la integracion" description={result.error} />
       </div>
     );
@@ -40,56 +82,46 @@ export default async function BarberTenantsPage({
   const suspendedCount = result.tenants.items.filter((tenant) => tenant.status === "SUSPENDED").length;
 
   return (
-    <div className="space-y-6">
-      <PageHeader eyebrow="Barber" title="Tenants Barber Pro" description="Listado centralizado de barberias conectadas a Barber Pro." />
-      <Row gutter={[16, 16]}>
+    <div className="space-y-4">
+      <div style={{ display: "grid", gap: 6 }}>
+        <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+          Barber
+        </div>
+        <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ minWidth: 0 }}>
+            <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
+              Tenants Barber Pro
+            </h1>
+            <p style={{ margin: "0.25rem 0 0", color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.45 }}>
+              Listado centralizado de barberias conectadas a Barber Pro.
+            </p>
+          </div>
+          <BarberTenantsSearch initialSearch={search} />
+        </div>
+      </div>
+
+      <Row gutter={[12, 12]}>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Coincidencias"
-            value={result.tenants.total}
-            accentVar="--section-barber"
-            tone="section"
-            hint="Resultados totales segun el filtro actual"
-          />
+          <CompactStat label="Coincidencias" value={result.tenants.total} tone="section" hint="Total" />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Visibles"
-            value={result.tenants.items.length}
-            accentVar="--section-barber"
-            tone="neutral"
-            hint={`Pagina ${result.tenants.page} de ${result.tenants.pages}`}
-          />
+          <CompactStat label="Visibles" value={result.tenants.items.length} tone="neutral" hint={`Pag. ${result.tenants.page}/${result.tenants.pages}`} />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Activos"
-            value={activeCount}
-            accentVar="--section-barber"
-            tone="success"
-            hint="Tenants activos en la pagina actual"
-          />
+          <CompactStat label="Activos" value={activeCount} tone="success" hint="Pagina actual" />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <MetricCard
-            title="Trial / suspendidos"
-            value={`${trialCount} / ${suspendedCount}`}
-            accentVar="--section-barber"
-            tone="warning"
-            hint="Estado mixto dentro del listado visible"
-          />
+          <CompactStat label="Trial / suspendidos" value={`${trialCount} / ${suspendedCount}`} tone="warning" hint="Estado mixto" />
         </Col>
       </Row>
       <Card
         className="surface-card border-0"
-        title={<span className="text-sm font-semibold text-[hsl(var(--text-secondary))]">Listado de barberias</span>}
+        styles={{ body: { padding: "0.9rem 1rem 1rem" } }}
+        title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Listado de barberias</span>}
         extra={<Tag bordered={false} color="processing">{result.tenants.total} coincidencias</Tag>}
       >
-        <div className="mb-4 flex justify-end">
-          <BarberTenantsSearch initialSearch={search} />
-        </div>
         <DataTable
-          caption={`Mostrando ${result.tenants.items.length} resultados en la pagina ${result.tenants.page} de ${result.tenants.pages}.`}
+          caption={`Mostrando ${result.tenants.items.length} resultados en la pag. ${result.tenants.page} de ${result.tenants.pages}.`}
           columns={[
             { key: "barberia", title: "Barberia" },
             { key: "slug", title: "Slug" },

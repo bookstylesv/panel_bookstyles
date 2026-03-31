@@ -3,7 +3,6 @@ import { Alert, Button, Card, Col, Input, Row, Tag } from "antd";
 import { MapPinned, Search, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { DataTable } from "@/components/ui/DataTable";
-import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { getDteDepartamentos, getDteMunicipios } from "@/lib/integrations/dte";
@@ -34,6 +33,27 @@ function buildHref(departamentoId: number | "all", search: string) {
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return <span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>{children}</span>;
+}
+
+function CompactStat({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div
+      style={{
+        borderRadius: 14,
+        border: "1px solid hsl(var(--border-default))",
+        background: "hsl(var(--bg-surface))",
+        padding: "0.8rem 0.9rem",
+        boxShadow: "var(--shadow-sm)",
+      }}
+    >
+      <div style={{ color: "hsl(var(--text-muted))", fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+        {label}
+      </div>
+      <div style={{ marginTop: 6, color: "hsl(var(--text-primary))", fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 800, lineHeight: 1.05 }}>
+        {value}
+      </div>
+    </div>
+  );
 }
 
 export default async function DteMunicipiosPage({
@@ -68,26 +88,26 @@ export default async function DteMunicipiosPage({
       <PageHeader
         eyebrow="DTE"
         title="Municipios"
-        description="Catalogo CAT-013 con filtro por departamento y lectura territorial del ecosistema."
+        description="Catalogo CAT-013 con filtro breve por departamento."
         actions={<Tag bordered={false} style={{ margin: 0, borderRadius: 999, background: "hsl(var(--accent-soft))", color: "hsl(var(--accent-strong))", fontWeight: 700 }}>CAT-013</Tag>}
       />
 
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Catalogo" value={result.municipios.length} accentVar="--section-dte" icon={<MapPinned size={18} />} />
+          <CompactStat label="Catalogo" value={result.municipios.length} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Filtrados" value={municipios.length} accentVar="--section-dte" icon={<Search size={18} />} />
+          <CompactStat label="Filtrados" value={municipios.length} />
         </Col>
         <Col xs={24} sm={12} xl={4}>
-          <MetricCard title="Departamentos" value={departamentos.length} accentVar="--section-dte" icon={<ShieldCheck size={18} />} />
+          <CompactStat label="Departamentos" value={departamentos.length} />
         </Col>
       </Row>
 
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={9}>
           <Card className="surface-card border-0" title={<SectionLabel>Filtros territoriales</SectionLabel>}>
-            <form action="/dte/municipios" method="get" style={{ display: "grid", gap: 12 }}>
+            <form action="/dte/municipios" method="get" style={{ display: "grid", gap: 10 }}>
               <Input
                 allowClear
                 prefix={<Search size={16} />}
