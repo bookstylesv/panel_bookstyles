@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Alert, Card, Col, Empty, List, Row, Tag, Typography } from "antd";
+import { Alert, Card, Col, Row, Tag, Typography } from "antd";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
@@ -168,17 +168,23 @@ export default async function OverviewPage() {
 
               <div className="mt-4">
                 {service.dashboard.status === "fulfilled" ? (
-                  <List
-                    size="small"
-                    dataSource={Object.entries(service.planCounts ?? {})}
-                    locale={{ emptyText: <Empty description="Sin planes cargados" image={Empty.PRESENTED_IMAGE_SIMPLE} /> }}
-                    renderItem={([plan, total]) => (
-                      <List.Item>
-                        <span>{plan}</span>
-                        <strong>{formatNumber(total)}</strong>
-                      </List.Item>
-                    )}
-                  />
+                  Object.entries(service.planCounts ?? {}).length ? (
+                    <div className="space-y-3">
+                      {Object.entries(service.planCounts ?? {}).map(([plan, total]) => (
+                        <div
+                          key={`${service.name}-${plan}`}
+                          className="flex items-center justify-between gap-3 border-b border-[hsl(var(--border-default)/0.72)] pb-3 last:border-b-0 last:pb-0"
+                        >
+                          <span>{plan}</span>
+                          <strong>{formatNumber(total)}</strong>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-[hsl(var(--border-default))] px-4 py-5 text-center text-sm text-[hsl(var(--text-muted))]">
+                      Sin planes cargados
+                    </div>
+                  )
                 ) : (
                   <Alert
                     type="warning"

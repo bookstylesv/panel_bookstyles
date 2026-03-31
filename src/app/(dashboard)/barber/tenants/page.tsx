@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Alert, Card, Table, Tag } from "antd";
+import { Alert, Card, Tag } from "antd";
+import { DataTable } from "@/components/ui/DataTable";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
@@ -30,26 +31,26 @@ export default async function BarberTenantsPage() {
     <div className="space-y-6">
       <PageHeader eyebrow="Barber" title="Tenants Barber Pro" description="Listado centralizado de barberias conectadas a Barber Pro." />
       <Card className="surface-card border-0">
-        <Table
-          rowKey="id"
-          dataSource={result.tenants.items}
-          pagination={false}
+        <DataTable
           columns={[
-            {
-              title: "Barberia",
-              dataIndex: "name",
-              render: (_: string, row) => <Link href={`/barber/tenants/${row.id}`}>{row.name}</Link>,
-            },
-            { title: "Slug", dataIndex: "slug" },
-            { title: "Plan", dataIndex: "plan" },
-            {
-              title: "Estado",
-              dataIndex: "status",
-              render: (value: string) => <Tag color={value === "ACTIVE" ? "success" : value === "TRIAL" ? "processing" : "error"}>{value}</Tag>,
-            },
-            { title: "Pago hasta", dataIndex: "paidUntil", render: (value: string | null) => formatDateOnly(value) },
-            { title: "Ciudad", dataIndex: "city", render: (value: string | null) => value ?? "Sin dato" },
+            { key: "barberia", title: "Barberia" },
+            { key: "slug", title: "Slug" },
+            { key: "plan", title: "Plan" },
+            { key: "estado", title: "Estado" },
+            { key: "pagoHasta", title: "Pago hasta" },
+            { key: "ciudad", title: "Ciudad" },
           ]}
+          rows={result.tenants.items.map((row) => ({
+            key: String(row.id),
+            cells: [
+              <Link key={`link-${row.id}`} href={`/barber/tenants/${row.id}`}>{row.name}</Link>,
+              row.slug,
+              row.plan,
+              <Tag key={`status-${row.id}`} color={row.status === "ACTIVE" ? "success" : row.status === "TRIAL" ? "processing" : "error"}>{row.status}</Tag>,
+              formatDateOnly(row.paidUntil),
+              row.city ?? "Sin dato",
+            ],
+          }))}
         />
       </Card>
     </div>

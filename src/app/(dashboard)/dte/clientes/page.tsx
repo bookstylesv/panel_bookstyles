@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Alert, Card, Table, Tag } from "antd";
+import { Alert, Card, Tag } from "antd";
+import { DataTable } from "@/components/ui/DataTable";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
@@ -34,29 +35,28 @@ export default async function DteClientesPage() {
         description="Listado de tenants de factura-dte desde el panel central."
       />
       <Card className="surface-card border-0">
-        <Table
-          rowKey="id"
-          dataSource={result.tenants}
+        <DataTable
           columns={[
-            {
-              title: "Cliente",
-              dataIndex: "nombre",
-              render: (_: string, row) => <Link href={`/dte/clientes/${row.id}`}>{row.nombre}</Link>,
-            },
-            { title: "Slug", dataIndex: "slug" },
-            { title: "Plan", dataIndex: "plan_nombre", render: (value: string | null) => value ?? "Sin plan" },
-            {
-              title: "Estado",
-              dataIndex: "estado",
-              render: (value: string) => (
-                <Tag color={value === "activo" ? "success" : value === "pruebas" ? "processing" : "error"}>
-                  {value}
-                </Tag>
-              ),
-            },
-            { title: "Vence", dataIndex: "fecha_pago", render: (value: string | null) => formatDateOnly(value) },
-            { title: "Dias", dataIndex: "dias_para_vencer", render: (value: number | null) => value ?? "N/A" },
+            { key: "cliente", title: "Cliente" },
+            { key: "slug", title: "Slug" },
+            { key: "plan", title: "Plan" },
+            { key: "estado", title: "Estado" },
+            { key: "vence", title: "Vence" },
+            { key: "dias", title: "Dias", align: "right" },
           ]}
+          rows={result.tenants.map((row) => ({
+            key: String(row.id),
+            cells: [
+              <Link key={`link-${row.id}`} href={`/dte/clientes/${row.id}`}>{row.nombre}</Link>,
+              row.slug,
+              row.plan_nombre ?? "Sin plan",
+              <Tag key={`status-${row.id}`} color={row.estado === "activo" ? "success" : row.estado === "pruebas" ? "processing" : "error"}>
+                {row.estado}
+              </Tag>,
+              formatDateOnly(row.fecha_pago),
+              row.dias_para_vencer ?? "N/A",
+            ],
+          }))}
         />
       </Card>
     </div>

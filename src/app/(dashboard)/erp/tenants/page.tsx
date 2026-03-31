@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Alert, Card, Table, Tag } from "antd";
+import { Alert, Card, Tag } from "antd";
+import { DataTable } from "@/components/ui/DataTable";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
@@ -30,25 +31,24 @@ export default async function ErpTenantsPage() {
     <div className="space-y-6">
       <PageHeader eyebrow="ERP" title="Tenants ERP Full Pro" description="Listado multi-tenant centralizado del ERP." />
       <Card className="surface-card border-0">
-        <Table
-          rowKey="id"
-          dataSource={result.tenants.items}
-          pagination={false}
+        <DataTable
           columns={[
-            {
-              title: "Empresa",
-              dataIndex: "name",
-              render: (_: string, row) => <Link href={`/erp/tenants/${row.id}`}>{row.name}</Link>,
-            },
-            { title: "Slug", dataIndex: "slug" },
-            { title: "Plan", dataIndex: "plan" },
-            {
-              title: "Estado",
-              dataIndex: "status",
-              render: (value: string) => <Tag color={value === "ACTIVE" ? "success" : value === "TRIAL" ? "processing" : "error"}>{value}</Tag>,
-            },
-            { title: "Trial", dataIndex: "trialEndsAt", render: (value: string | null) => formatDateOnly(value) },
+            { key: "empresa", title: "Empresa" },
+            { key: "slug", title: "Slug" },
+            { key: "plan", title: "Plan" },
+            { key: "estado", title: "Estado" },
+            { key: "trial", title: "Trial" },
           ]}
+          rows={result.tenants.items.map((row) => ({
+            key: String(row.id),
+            cells: [
+              <Link key={`link-${row.id}`} href={`/erp/tenants/${row.id}`}>{row.name}</Link>,
+              row.slug,
+              row.plan,
+              <Tag key={`status-${row.id}`} color={row.status === "ACTIVE" ? "success" : row.status === "TRIAL" ? "processing" : "error"}>{row.status}</Tag>,
+              formatDateOnly(row.trialEndsAt),
+            ],
+          }))}
         />
       </Card>
     </div>

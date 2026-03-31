@@ -1,4 +1,5 @@
-import { Alert, Card, Table, Tag } from "antd";
+import { Alert, Card, Tag } from "antd";
+import { DataTable } from "@/components/ui/DataTable";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatCurrency } from "@/lib/formatters";
@@ -33,20 +34,24 @@ export default async function DtePlanesPage() {
         description="Consulta server-side del catalogo de planes de factura-dte."
       />
       <Card className="surface-card border-0">
-        <Table
-          rowKey="id"
-          dataSource={result.plans}
+        <DataTable
           columns={[
-            { title: "Plan", dataIndex: "nombre" },
-            { title: "Sucursales", dataIndex: "max_sucursales" },
-            { title: "Usuarios", dataIndex: "max_usuarios" },
-            { title: "Precio", dataIndex: "precio", render: (value: number) => formatCurrency(value) },
-            {
-              title: "Activo",
-              dataIndex: "activo",
-              render: (value: boolean) => <Tag color={value ? "success" : "default"}>{value ? "Activo" : "Inactivo"}</Tag>,
-            },
+            { key: "plan", title: "Plan" },
+            { key: "sucursales", title: "Sucursales", align: "right" },
+            { key: "usuarios", title: "Usuarios", align: "right" },
+            { key: "precio", title: "Precio", align: "right" },
+            { key: "activo", title: "Activo", align: "center" },
           ]}
+          rows={result.plans.map((row) => ({
+            key: String(row.id),
+            cells: [
+              row.nombre,
+              row.max_sucursales,
+              row.max_usuarios,
+              formatCurrency(row.precio),
+              <Tag key={`activo-${row.id}`} color={row.activo ? "success" : "default"}>{row.activo ? "Activo" : "Inactivo"}</Tag>,
+            ],
+          }))}
         />
       </Card>
     </div>

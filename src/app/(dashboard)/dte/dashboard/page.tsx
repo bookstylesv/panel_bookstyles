@@ -1,4 +1,5 @@
-import { Alert, Card, Col, Row, Table, Tag } from "antd";
+import { Alert, Card, Col, Row, Tag } from "antd";
+import { DataTable } from "@/components/ui/DataTable";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
@@ -59,44 +60,41 @@ export default async function DteDashboardPage() {
       <Row gutter={[16, 16]}>
         <Col xs={24} xl={12}>
           <Card className="surface-card border-0">
-            <Table
-              rowKey={(row) => `${row.tipo}-${row.id}`}
-              pagination={false}
-              dataSource={alertas}
+            <DataTable
               columns={[
-                { title: "Tenant", dataIndex: "nombre" },
-                { title: "Plan", dataIndex: "plan_nombre", render: (value: string | null) => value ?? "Sin plan" },
-                {
-                  title: "Estado",
-                  dataIndex: "tipo",
-                  render: (value: string) => (
-                    <Tag color={value === "Vencido" ? "error" : "warning"}>{value}</Tag>
-                  ),
-                },
-                {
-                  title: "Fecha pago",
-                  dataIndex: "fecha_pago",
-                  render: (value: string) => formatDateOnly(value),
-                },
+                { key: "tenant", title: "Tenant" },
+                { key: "plan", title: "Plan" },
+                { key: "estado", title: "Estado" },
+                { key: "fechaPago", title: "Fecha pago" },
               ]}
+              rows={alertas.map((item) => ({
+                key: `${item.tipo}-${item.id}`,
+                cells: [
+                  item.nombre,
+                  item.plan_nombre ?? "Sin plan",
+                  <Tag key={`tag-${item.id}`} color={item.tipo === "Vencido" ? "error" : "warning"}>
+                    {item.tipo}
+                  </Tag>,
+                  formatDateOnly(item.fecha_pago),
+                ],
+              }))}
             />
           </Card>
         </Col>
         <Col xs={24} xl={12}>
           <Card className="surface-card border-0">
-            <Table
-              pagination={false}
-              dataSource={[
-                { label: "Suspendidos", value: dashboard.suspendidos },
-                { label: "Por vencer", value: dashboard.por_vencer },
-                { label: "Vencidos", value: dashboard.vencidos },
-                { label: "Nuevos semana", value: dashboard.nuevos_semana },
-                { label: "Nuevos mes", value: dashboard.nuevos_mes },
-                { label: "Ingreso mes", value: formatCurrency(dashboard.ingresos_mes) },
-              ]}
+            <DataTable
               columns={[
-                { title: "Indicador", dataIndex: "label" },
-                { title: "Valor", dataIndex: "value" },
+                { key: "indicador", title: "Indicador" },
+                { key: "valor", title: "Valor", align: "right" },
+              ]}
+              rows={[
+                { key: "suspendidos", cells: ["Suspendidos", dashboard.suspendidos] },
+                { key: "por-vencer", cells: ["Por vencer", dashboard.por_vencer] },
+                { key: "vencidos", cells: ["Vencidos", dashboard.vencidos] },
+                { key: "nuevos-semana", cells: ["Nuevos semana", dashboard.nuevos_semana] },
+                { key: "nuevos-mes", cells: ["Nuevos mes", dashboard.nuevos_mes] },
+                { key: "ingreso-mes", cells: ["Ingreso mes", formatCurrency(dashboard.ingresos_mes)] },
               ]}
             />
           </Card>

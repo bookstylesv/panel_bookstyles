@@ -1,4 +1,5 @@
-import { Alert, Card, Col, Row, Table } from "antd";
+import { Alert, Card, Col, Row } from "antd";
+import { DataTable } from "@/components/ui/DataTable";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
@@ -42,14 +43,15 @@ export default async function BarberDashboardPage() {
         <Col xs={24} md={12} xl={6}><MetricCard title="Suspendidos" value={formatNumber(result.dashboard.suspendidos)} accentVar="--section-barber" /></Col>
       </Row>
       <Card className="surface-card border-0">
-        <Table
-          rowKey="plan"
-          dataSource={planRows}
-          pagination={false}
+        <DataTable
           columns={[
-            { title: "Plan", dataIndex: "plan" },
-            { title: "Total", dataIndex: "total", render: (value: number) => formatNumber(value) },
+            { key: "plan", title: "Plan" },
+            { key: "total", title: "Total", align: "right" },
           ]}
+          rows={planRows.map((row) => ({
+            key: row.plan,
+            cells: [row.plan, formatNumber(row.total)],
+          }))}
         />
       </Card>
     </div>
