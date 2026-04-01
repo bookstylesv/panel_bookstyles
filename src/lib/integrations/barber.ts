@@ -82,7 +82,7 @@ export async function updateBarberConfig(data: Partial<BarberConfig>) {
   return fetchJson<BarberConfig>(`${getBaseUrl()}/config`, {
     method: "PUT",
     headers: { ...getHeaders(), "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: data,
   });
 }
 
@@ -103,7 +103,7 @@ export async function createBarberTenant(data: CreateBarberTenantInput) {
   return fetchJson<CreateBarberTenantResult>(`${getBaseUrl()}/tenants`, {
     method: "POST",
     headers: { ...getHeaders(), "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: data,
   });
 }
 
