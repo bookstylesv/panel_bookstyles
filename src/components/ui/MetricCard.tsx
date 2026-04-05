@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Card, Statistic } from "antd";
 
 type Tone = "section" | "success" | "warning" | "danger" | "neutral";
@@ -7,7 +7,7 @@ const TONE_VARS: Record<Tone, string> = {
   section: "",
   success: "--state-success",
   warning: "--state-warning",
-  danger: "--state-danger",
+  danger:  "--state-danger",
   neutral: "--text-muted",
 };
 
@@ -20,94 +20,64 @@ export function MetricCard({
   hint,
   icon,
 }: {
-  title: string;
-  value: number | string;
+  title:     string;
+  value:     number | string;
   accentVar: string;
-  tone?: Tone;
-  suffix?: string;
-  hint?: string;
-  icon?: ReactNode;
+  tone?:     Tone;
+  suffix?:   string;
+  hint?:     string;
+  icon?:     ReactNode;
 }) {
   const colorVar = tone === "section" ? accentVar : TONE_VARS[tone];
-  const isNumericValue = typeof value === "number";
+
+  // CSS custom properties: all visual styling stays in globals.css
+  const cssVars = {
+    "--metric-accent":      `hsl(var(${colorVar}))`,
+    "--metric-accent-soft": `hsl(var(${colorVar}) / 0.1)`,
+  } as CSSProperties;
 
   return (
     <Card
-      className="surface-card metric-card border-0 h-full"
+      className="metric-card h-full"
       size="small"
-      style={{ borderTop: `3px solid hsl(var(${colorVar}))` }}
+      style={cssVars}
       styles={{
         body: {
+          padding: "0.85rem 1rem",
           display: "flex",
-          minHeight: "100%",
           flexDirection: "column",
-          gap: "0.5rem",
-          padding: "0.8rem 0.9rem 0.82rem",
+          height: "100%",
         },
       }}
     >
-      <div
-        className="metric-card__eyebrow"
-      >
-        <div style={{ minWidth: 0 }}>
-          <div className="metric-card__kicker">
-            <span
-              className="metric-card__dot"
-              style={{ background: `hsl(var(${colorVar}))` }}
-            />
-            {title}
-          </div>
-        </div>
-
-        {icon ? (
-          <div
-            className="metric-card__icon"
-            style={{
-              color: `hsl(var(${colorVar}))`,
-              flexShrink: 0,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "2rem",
-              height: "2rem",
-              borderRadius: "999px",
-              background: `hsl(var(${colorVar}) / 0.12)`,
-            }}
-          >
-            {icon}
-          </div>
-        ) : null}
+      <div className="metric-card__header">
+        <div className="metric-card__kicker">{title}</div>
+        {icon ? <div className="metric-card__icon">{icon}</div> : null}
       </div>
 
-      {hint ? <p className="metric-card__hint">{hint}</p> : null}
-
-      {isNumericValue ? (
+      {typeof value === "number" ? (
         <Statistic
           className="metric-card__value"
           value={value}
           suffix={suffix}
-          valueStyle={{
-            color: `hsl(var(${colorVar}))`,
-            fontSize: "1.55rem",
-            lineHeight: 1,
-            letterSpacing: "-0.04em",
-          }}
+          valueStyle={{ color: "var(--metric-accent)" }}
         />
       ) : (
         <div
-          className="metric-card__value metric-card__value--text"
           style={{
-            color: `hsl(var(${colorVar}))`,
+            color: "var(--metric-accent)",
             fontFamily: "var(--font-display)",
-            fontSize: "1.2rem",
-            lineHeight: 1.1,
-            letterSpacing: "-0.03em",
-            fontWeight: 700,
+            fontSize: "clamp(1.75rem, 3.2vw, 2.35rem)",
+            lineHeight: 1,
+            letterSpacing: "-0.04em",
+            fontWeight: 800,
           }}
         >
           {value}
         </div>
       )}
+
+      {hint ? <p className="metric-card__hint">{hint}</p> : null}
     </Card>
   );
 }

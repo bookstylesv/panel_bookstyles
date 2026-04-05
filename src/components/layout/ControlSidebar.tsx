@@ -159,12 +159,12 @@ function SidebarContent({
       {/* Brand */}
       <div
         style={{
-          minHeight: 72,
+          minHeight: 56,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           gap: 10,
-          padding: collapsed ? "16px 10px" : "16px 16px",
+          padding: collapsed ? "10px 10px" : "10px 14px",
           borderBottom: "1px solid hsl(var(--sidebar-border))",
         }}
       >
@@ -172,20 +172,19 @@ function SidebarContent({
           <div className="panel-sider__mark">SC</div>
           {!collapsed && (
             <div style={{ minWidth: 0 }}>
-              <p className="panel-sider__eyebrow">Speeddan Control</p>
-              <Text strong style={{ color: "hsl(var(--sidebar-fg))", fontSize: 14, display: "block", lineHeight: 1.15 }}>
-                Panel central
-              </Text>
-              <p className="panel-sider__caption">Superadmin</p>
+              <p className="panel-sider__eyebrow">Speeddan</p>
+              <span style={{ color: "hsl(var(--sidebar-fg))", fontSize: 13, fontWeight: 700, display: "block", lineHeight: 1.2 }}>
+                Panel de control
+              </span>
             </div>
           )}
         </div>
-        <Tooltip title={collapsed ? "Expandir menu" : "Colapsar menu"} placement="right">
+        <Tooltip title={collapsed ? "Expandir" : "Colapsar"} placement="right">
           <Button
             type="text"
             size="small"
             onClick={onCollapse}
-            icon={collapsed ? <ChevronRight size={13} /> : <ChevronLeft size={13} />}
+            icon={collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
             style={{ color: "hsl(var(--sidebar-muted))", flexShrink: 0 }}
           />
         </Tooltip>
@@ -211,25 +210,26 @@ function SidebarContent({
       </div>
 
       {/* User footer */}
-      <div style={{ padding: collapsed ? "8px 10px 14px" : "8px 14px 16px" }}>
+      <div style={{ padding: collapsed ? "8px 10px 12px" : "8px 14px 14px" }}>
         <Divider style={{ margin: "0 0 10px", borderColor: "hsl(var(--sidebar-border))" }} />
         <div className="panel-sider__profile">
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
             <Avatar
-              size={32}
+              size={30}
               style={{
-                background: "linear-gradient(135deg, hsl(var(--brand-primary)) 0%, hsl(var(--brand-primary-dark)) 100%)",
+                background: "hsl(var(--accent))",
                 color: "hsl(var(--text-inverse))",
                 fontWeight: 700,
                 flexShrink: 0,
+                fontSize: 11,
               }}
             >
               {initials}
             </Avatar>
             {!collapsed && (
               <div style={{ minWidth: 0, flex: 1 }}>
-                <div className="panel-sider__profile-label" style={{ fontSize: 13 }}>
-                  {session?.username ?? "Superadmin"}
+                <div className="panel-sider__profile-label">
+                  {session?.username ?? "admin"}
                 </div>
                 <div className="panel-sider__profile-meta">Sesion segura</div>
               </div>
@@ -238,13 +238,14 @@ function SidebarContent({
           <Button
             type="text"
             block={!collapsed}
-            icon={<LogOut size={14} />}
+            icon={<LogOut size={13} />}
             onClick={onLogout}
             style={{
-              marginTop: 10,
+              marginTop: 8,
               justifyContent: collapsed ? "center" : "flex-start",
-              color: "hsl(var(--sidebar-fg))",
+              color: "hsl(var(--sidebar-muted))",
               paddingInline: collapsed ? 0 : 4,
+              fontSize: 12,
             }}
           >
             {!collapsed ? "Cerrar sesion" : null}

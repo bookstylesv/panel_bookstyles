@@ -206,8 +206,8 @@ function getDashboardTheme() {
     },
     components: {
       Layout: {
-        headerBg: "transparent",
-        bodyBg: "transparent",
+        headerBg: tokenColor("--bg-surface"),
+        bodyBg: tokenColor("--bg-page"),
         siderBg: tokenColor("--bg-sidebar"),
       },
       Menu: {
@@ -216,12 +216,12 @@ function getDashboardTheme() {
         darkItemHoverBg: tokenColor("--sidebar-hover-bg"),
         darkItemSelectedBg: tokenColor("--sidebar-active-bg"),
         darkItemSelectedColor: tokenColor("--sidebar-active-fg"),
-        darkItemColor: tokenColor("--sidebar-fg", "0.9"),
+        darkItemColor: tokenColor("--sidebar-fg"),
         darkGroupTitleColor: tokenColor("--sidebar-muted"),
-        itemBorderRadius: 10,
-        itemMarginBlock: 4,
+        itemBorderRadius: 8,
+        itemMarginBlock: 2,
         itemMarginInline: 0,
-        subMenuItemBorderRadius: 10,
+        subMenuItemBorderRadius: 8,
       },
       Card: {
         colorBorderSecondary: tokenColor("--border-default"),
