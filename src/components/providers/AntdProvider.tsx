@@ -163,17 +163,26 @@ function getDefaultTheme() {
   };
 }
 
+// Colores reales que Ant Design puede parsear para derivar fondos de alertas, badges, etc.
+// NO usar CSS vars aquí: el algoritmo defaultAlgorithm las necesita para calcular colorWarningBg, colorErrorBg, etc.
+const SEMANTIC_COLORS = {
+  primary: "hsl(262, 72%, 58%)",   // --raw-primary
+  success: "hsl(142, 71%, 35%)",   // --raw-success
+  warning: "hsl(38,  92%, 50%)",   // --raw-warning
+  danger:  "hsl(0,   84%, 60%)",   // --raw-danger
+} as const;
+
 function getDashboardTheme() {
   return {
     cssVar: {},
     algorithm: antdTheme.defaultAlgorithm,
     token: {
-      colorPrimary: tokenColor("--accent"),
-      colorLink: tokenColor("--accent"),
-      colorInfo: tokenColor("--accent"),
-      colorSuccess: tokenColor("--status-success"),
-      colorWarning: tokenColor("--status-warning"),
-      colorError: tokenColor("--status-error"),
+      colorPrimary: SEMANTIC_COLORS.primary,
+      colorLink:    SEMANTIC_COLORS.primary,
+      colorInfo:    SEMANTIC_COLORS.primary,
+      colorSuccess: SEMANTIC_COLORS.success,
+      colorWarning: SEMANTIC_COLORS.warning,
+      colorError:   SEMANTIC_COLORS.danger,
       colorBgBase: tokenColor("--bg-surface"),
       colorBgLayout: tokenColor("--bg-page"),
       colorBgContainer: tokenColor("--bg-surface"),

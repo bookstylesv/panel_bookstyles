@@ -23,9 +23,9 @@
   --raw-shell-900:  222 44% 12%;
   --raw-shell-800:  220 35% 18%;
 
-  /* Page surface */
-  --raw-page:       220 14% 96%;
-  --raw-page-soft:  220 14% 98%;
+  /* Page surface — mismo tono violeta que el login */
+  --raw-page:       258 45% 97%;
+  --raw-page-soft:  258 42% 98%;
 
   /* Brand violet */
   --raw-primary:        262 72% 58%;
@@ -158,7 +158,22 @@ body {
   font-family: var(--font-sans);
 }
 
-body { position: relative; min-height: 100vh; }
+body {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Gradiente ambiental igual al login — no toca el contenido */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top left, hsl(var(--accent-soft) / 0.82) 0, transparent 26%),
+    radial-gradient(circle at bottom right, hsl(var(--section-barber) / 0.06) 0, transparent 20%);
+  z-index: 0;
+}
 
 a { color: inherit; text-decoration: none; }
 
@@ -429,6 +444,35 @@ button, input, textarea, select { font: inherit; }
 .control-dashboard .ant-picker-focused {
   border-color: hsl(var(--accent)) !important;
   box-shadow: 0 0 0 2px hsl(var(--accent) / 0.1) !important;
+}
+
+/* Alertas: siempre fondos claros independientemente del tema */
+.control-dashboard .ant-alert-warning {
+  background-color: hsl(var(--status-warning-bg)) !important;
+  border-color: hsl(var(--status-warning) / 0.25) !important;
+}
+
+.control-dashboard .ant-alert-error {
+  background-color: hsl(var(--status-error-bg)) !important;
+  border-color: hsl(var(--status-error) / 0.25) !important;
+}
+
+.control-dashboard .ant-alert-info {
+  background-color: hsl(var(--accent-soft)) !important;
+  border-color: hsl(var(--accent) / 0.2) !important;
+}
+
+.control-dashboard .ant-alert-success {
+  background-color: hsl(var(--status-success-bg)) !important;
+  border-color: hsl(var(--status-success) / 0.25) !important;
+}
+
+.control-dashboard .ant-alert-message {
+  color: hsl(var(--text-primary)) !important;
+}
+
+.control-dashboard .ant-alert-description {
+  color: hsl(var(--text-secondary)) !important;
 }
 
 /* ═══════════════════════════════════════════════════════════
