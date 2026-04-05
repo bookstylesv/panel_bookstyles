@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Col, Descriptions, Row, Statistic, Tag } from "antd";
 import { Scissors, Users, TrendingUp, PauseCircle } from "lucide-react";
 import { MetricCard } from "@/components/ui/MetricCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatNumber } from "@/lib/formatters";
 import { getBarberDashboard } from "@/lib/integrations/barber";
@@ -20,12 +21,7 @@ export default async function BarberDashboardPage() {
   if ("error" in result) {
     return (
       <div className="space-y-4">
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-          <div>
-            <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>Barber</div>
-            <h1 style={{ margin: "0.2rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.25rem, 2vw, 1.6rem)", lineHeight: 1.1 }}>Dashboard Barber Pro</h1>
-          </div>
-        </div>
+        <PageHeader eyebrow="Barber" title="Dashboard Barber Pro" description="" />
         <Alert type="error" showIcon message="Fallo la integracion" description={result.error} />
       </div>
     );
@@ -37,15 +33,16 @@ export default async function BarberDashboardPage() {
 
   return (
     <div className="space-y-4">
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <div>
-          <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>Barber</div>
-          <h1 style={{ margin: "0.2rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.25rem, 2vw, 1.6rem)", lineHeight: 1.1 }}>Dashboard Barber Pro</h1>
-        </div>
-        <Button href="/barber/tenants" type="primary" style={{ background: "hsl(var(--section-barber))", borderColor: "hsl(var(--section-barber))" }}>
-          Ver barberias
-        </Button>
-      </div>
+      <PageHeader
+        eyebrow="Barber"
+        title="Dashboard Barber Pro"
+        description="Métricas y distribución de barberías"
+        actions={
+          <Button href="/barber/tenants" type="primary" style={{ background: "hsl(var(--section-barber))", borderColor: "hsl(var(--section-barber))" }}>
+            Ver barberías
+          </Button>
+        }
+      />
 
       <Row gutter={[12, 12]}>
         <Col xs={24} sm={12} xl={6}>

@@ -2,6 +2,7 @@ import { Alert, Card, Col, Descriptions, Row } from "antd";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDate, formatNumber } from "@/lib/formatters";
 import { getBarberHealth } from "@/lib/integrations/barber";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 function CompactStat({
   label,
@@ -62,14 +63,7 @@ export default async function BarberHealthPage() {
   if ("error" in result) {
     return (
       <div className="space-y-4">
-        <div>
-          <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
-            Barber
-          </div>
-          <h1 style={{ margin: "0.35rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
-            Health Barber Pro
-          </h1>
-        </div>
+        <PageHeader eyebrow="Barber" title="Health Barber Pro" description="" />
         <Alert type="error" showIcon message="Fallo la integracion" description={result.error} />
       </div>
     );
@@ -77,17 +71,7 @@ export default async function BarberHealthPage() {
 
   return (
     <div className="space-y-4">
-      <div style={{ display: "grid", gap: 6 }}>
-        <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
-          Barber
-        </div>
-        <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
-          Health Barber Pro
-        </h1>
-        <p style={{ margin: 0, color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.45 }}>
-          Estado de salud del backend de Barber Pro.
-        </p>
-      </div>
+      <PageHeader eyebrow="Barber" title="Health Barber Pro" description="Estado de salud del backend de Barber Pro." />
 
       <Row gutter={[12, 12]}>
         <Col xs={24} md={8}>

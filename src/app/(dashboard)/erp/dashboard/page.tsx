@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Col, Descriptions, Row, Statistic, Tag } from "antd";
 import { Building2, TrendingUp, Users, PauseCircle } from "lucide-react";
 import { MetricCard } from "@/components/ui/MetricCard";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { formatNumber } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/error-message";
 import { getErpDashboard } from "@/lib/integrations/erp";
@@ -20,10 +21,7 @@ export default async function ErpDashboardPage() {
   if ("error" in result) {
     return (
       <div className="space-y-4">
-        <div>
-          <div style={{ color: "hsl(var(--section-erp))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>ERP</div>
-          <h1 style={{ margin: "0.2rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.25rem, 2vw, 1.6rem)", lineHeight: 1.1 }}>Dashboard ERP Full Pro</h1>
-        </div>
+        <PageHeader eyebrow="ERP" title="Dashboard ERP Full Pro" description="" />
         <Alert type="warning" showIcon message="ERP aun no responde al contrato superadmin" description={result.error} />
       </div>
     );
@@ -36,15 +34,16 @@ export default async function ErpDashboardPage() {
 
   return (
     <div className="space-y-4">
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <div>
-          <div style={{ color: "hsl(var(--section-erp))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>ERP</div>
-          <h1 style={{ margin: "0.2rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.25rem, 2vw, 1.6rem)", lineHeight: 1.1 }}>Dashboard ERP Full Pro</h1>
-        </div>
-        <Button href="/erp/tenants" type="primary" style={{ background: "hsl(var(--section-erp))", borderColor: "hsl(var(--section-erp))" }}>
-          Ver tenants
-        </Button>
-      </div>
+      <PageHeader
+        eyebrow="ERP"
+        title="Dashboard ERP Full Pro"
+        description="Métricas y distribución de tenants ERP"
+        actions={
+          <Button href="/erp/tenants" type="primary" style={{ background: "hsl(var(--section-erp))", borderColor: "hsl(var(--section-erp))" }}>
+            Ver tenants
+          </Button>
+        }
+      />
 
       <Row gutter={[12, 12]}>
         <Col xs={24} sm={12} xl={6}>

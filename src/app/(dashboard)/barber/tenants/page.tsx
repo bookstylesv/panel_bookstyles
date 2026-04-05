@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Alert, Card, Col, Row, Tag } from "antd";
 import { DataTable } from "@/components/ui/DataTable";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { BarberTenantsSearch } from "@/components/barber/BarberTenantsSearch";
 import { NewBarberTenantDrawer } from "@/components/barber/NewBarberTenantDrawer";
 import { getErrorMessage } from "@/lib/error-message";
@@ -65,14 +66,7 @@ export default async function BarberTenantsPage({
   if ("error" in result) {
     return (
       <div className="space-y-4">
-        <div>
-          <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
-            Barber
-          </div>
-          <h1 style={{ margin: "0.35rem 0 0", color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
-            Tenants Barber Pro
-          </h1>
-        </div>
+        <PageHeader eyebrow="Barber" title="Tenants Barber Pro" description="" />
         <Alert type="error" showIcon message="Fallo la integracion" description={result.error} />
       </div>
     );
@@ -84,22 +78,12 @@ export default async function BarberTenantsPage({
 
   return (
     <div className="space-y-4">
-      <div style={{ display: "grid", gap: 6 }}>
-        <div style={{ color: "hsl(var(--section-barber))", fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase" }}>
-          Barber
-        </div>
-        <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-          <div style={{ minWidth: 0 }}>
-            <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.2rem, 2vw, 1.55rem)", lineHeight: 1.1 }}>
-              Tenants Barber Pro
-            </h1>
-            <p style={{ margin: "0.25rem 0 0", color: "hsl(var(--text-muted))", fontSize: 13, lineHeight: 1.45 }}>
-              Listado centralizado de barberias conectadas a Barber Pro.
-            </p>
-          </div>
-          <NewBarberTenantDrawer />
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Barber"
+        title="Tenants Barber Pro"
+        description="Listado centralizado de barberías conectadas a Barber Pro."
+        actions={<NewBarberTenantDrawer />}
+      />
 
       <Row gutter={[12, 12]}>
         <Col xs={24} md={12} xl={6}>

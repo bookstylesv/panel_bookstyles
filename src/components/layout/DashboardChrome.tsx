@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Avatar, Button, Layout, Space, Tag, Typography } from "antd";
+import { Menu as MenuIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { ControlSidebar } from "@/components/layout/ControlSidebar";
@@ -48,6 +50,7 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { session } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const active =
     SECTION_META.find((item) => item.matcher(pathname)) ?? SECTION_META[SECTION_META.length - 1];
@@ -57,9 +60,9 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
 
   return (
     <Layout className="control-dashboard" hasSider style={{ minHeight: "100vh", background: "transparent" }}>
-      <ControlSidebar />
+      <ControlSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 
-      <Layout style={{ background: "transparent" }}>
+      <Layout style={{ background: "transparent", minWidth: 0 }}>
         <Header
           className="control-dashboard__topbar"
           style={{
@@ -83,6 +86,15 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
             }}
           >
             <Space size={8} wrap>
+              {/* Hamburger — visible only on mobile via CSS */}
+              <Button
+                type="text"
+                size="small"
+                className="control-dashboard__hamburger"
+                icon={<MenuIcon size={18} />}
+                onClick={() => setMobileOpen(true)}
+                style={{ color: "hsl(var(--text-secondary))" }}
+              />
               <Tag
                 bordered={false}
                 className="control-dashboard__section"
@@ -154,7 +166,7 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
                 </Avatar>
                 <div className="control-dashboard__user-meta">
                   <div
-                  style={{
+                    style={{
                       color: "hsl(var(--text-primary))",
                       fontSize: 11.5,
                       fontWeight: 700,

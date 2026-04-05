@@ -1,6 +1,7 @@
 ﻿import Link from "next/link";
 import { Alert, Card, Col, Row, Tag } from "antd";
 import { DataTable } from "@/components/ui/DataTable";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { formatDateOnly, formatNumber } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/error-message";
 import { getErpTenants } from "@/lib/integrations/erp";
@@ -30,19 +31,7 @@ export default async function ErpTenantsPage() {
   if ("error" in result) {
     return (
       <div className="space-y-4">
-        <Card className="surface-card border-0" styles={{ body: { padding: 14 } }}>
-          <div style={{ display: "grid", gap: 8 }}>
-            <Tag bordered={false} style={{ margin: 0, width: "fit-content", borderRadius: 999, paddingInline: "0.75rem", background: "hsl(var(--section-erp) / 0.12)", color: "hsl(var(--section-erp))", fontWeight: 700 }}>
-              ERP
-            </Tag>
-            <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.5rem, 2.3vw, 1.9rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}>
-              Tenants ERP Full Pro
-            </h1>
-            <p style={{ margin: 0, maxWidth: 640, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
-              Listado compacto para revisar estado y vencimiento cuando ERP exponga el contrato superadmin.
-            </p>
-          </div>
-        </Card>
+        <PageHeader eyebrow="ERP" title="Tenants ERP Full Pro" description="" />
         <Alert type="warning" showIcon message="ERP aun no responde al contrato superadmin" description={result.error} />
       </div>
     );
@@ -55,19 +44,11 @@ export default async function ErpTenantsPage() {
 
   return (
     <div className="space-y-4">
-      <Card className="surface-card border-0" styles={{ body: { padding: 14 } }}>
-        <div style={{ display: "grid", gap: 8 }}>
-          <Tag bordered={false} style={{ margin: 0, width: "fit-content", borderRadius: 999, paddingInline: "0.75rem", background: "hsl(var(--section-erp) / 0.12)", color: "hsl(var(--section-erp))", fontWeight: 700 }}>
-            ERP
-          </Tag>
-          <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.5rem, 2.3vw, 1.9rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}>
-            Tenants ERP Full Pro
-          </h1>
-          <p style={{ margin: 0, maxWidth: 640, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
-            Listado centralizado del ERP con una lectura mas compacta de estado y vencimiento.
-          </p>
-        </div>
-      </Card>
+      <PageHeader
+        eyebrow="ERP"
+        title="Tenants ERP Full Pro"
+        description="Listado centralizado del ERP con estado y vencimiento."
+      />
 
       <Row gutter={[12, 12]}>
         <Col xs={24} sm={12} xl={6}>

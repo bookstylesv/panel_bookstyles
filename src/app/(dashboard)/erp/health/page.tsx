@@ -2,6 +2,7 @@
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDate, formatNumber } from "@/lib/formatters";
 import { getErpHealth } from "@/lib/integrations/erp";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 async function loadErpHealth() {
   try {
@@ -45,30 +46,7 @@ export default async function ErpHealthPage() {
   if ("error" in result) {
     return (
       <div className="space-y-4">
-        <Card className="surface-card border-0" styles={{ body: { padding: 14 } }}>
-          <div style={{ display: "grid", gap: 8 }}>
-            <Tag
-              bordered={false}
-              style={{
-                margin: 0,
-                width: "fit-content",
-                borderRadius: 999,
-                paddingInline: "0.75rem",
-                background: "hsl(var(--section-erp) / 0.12)",
-                color: "hsl(var(--section-erp))",
-                fontWeight: 700,
-              }}
-            >
-              ERP
-            </Tag>
-            <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.5rem, 2.3vw, 1.9rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}>
-              Health ERP Full Pro
-            </h1>
-            <p style={{ margin: 0, maxWidth: 640, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
-              Vista compacta del estado del backend ERP, sin texto innecesario ni bloques que empujen la data hacia abajo.
-            </p>
-          </div>
-        </Card>
+        <PageHeader eyebrow="ERP" title="Health ERP Full Pro" description="" />
         <Alert type="warning" showIcon message="ERP aun no responde al contrato superadmin" description={result.error} />
       </div>
     );
@@ -79,35 +57,16 @@ export default async function ErpHealthPage() {
 
   return (
     <div className="space-y-4">
-      <Card className="surface-card border-0" styles={{ body: { display: "grid", gap: 10, padding: 14 } }}>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-          <div style={{ display: "grid", gap: 6 }}>
-            <Tag
-              bordered={false}
-              style={{
-                margin: 0,
-                width: "fit-content",
-                borderRadius: 999,
-                paddingInline: "0.75rem",
-                background: "hsl(var(--section-erp) / 0.12)",
-                color: "hsl(var(--section-erp))",
-                fontWeight: 700,
-              }}
-            >
-              ERP
-            </Tag>
-            <h1 style={{ margin: 0, color: "hsl(var(--text-primary))", fontSize: "clamp(1.5rem, 2.3vw, 1.9rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}>
-              Health ERP Full Pro
-            </h1>
-            <p style={{ margin: 0, maxWidth: 640, color: "hsl(var(--text-muted))", fontSize: 13.5, lineHeight: 1.45 }}>
-              Estado operativo del backend ERP con latencia y timestamp visibles de inmediato.
-            </p>
-          </div>
+      <PageHeader
+        eyebrow="ERP"
+        title="Health ERP Full Pro"
+        description="Estado operativo del backend ERP con latencia y timestamp."
+        actions={
           <Tag bordered={false} style={{ margin: 0, borderRadius: 999, paddingInline: "0.75rem", ...statusStyles, fontWeight: 700 }}>
             {statusLabel}
           </Tag>
-        </div>
-      </Card>
+        }
+      />
 
       <Row gutter={[12, 12]}>
         <Col xs={24} md={8}>

@@ -1337,6 +1337,41 @@ select {
   color: hsl(var(--text-muted));
 }
 
+/* Hamburger hidden on desktop, visible on mobile */
+.control-dashboard__hamburger {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .control-dashboard__hamburger {
+    display: inline-flex !important;
+  }
+
+  .control-dashboard__content {
+    padding: 12px 12px 24px !important;
+  }
+
+  .control-dashboard .page-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .control-dashboard .page-header__actions {
+    justify-content: flex-start;
+  }
+
+  /* Tighten row gutters on mobile */
+  .control-dashboard .ant-row {
+    margin-left: -6px !important;
+    margin-right: -6px !important;
+  }
+
+  .control-dashboard .ant-col {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+}
+
 @media (max-width: 1024px) {
   .control-dashboard__meta {
     justify-content: flex-start;
