@@ -23,9 +23,9 @@
   --raw-shell-900:  222 44% 12%;
   --raw-shell-800:  220 35% 18%;
 
-  /* Page surface — mismo tono violeta que el login */
-  --raw-page:       258 45% 97%;
-  --raw-page-soft:  258 42% 98%;
+  /* Page surface — violeta visible igual al login */
+  --raw-page:       258 55% 93%;
+  --raw-page-soft:  258 50% 95%;
 
   /* Brand violet */
   --raw-primary:        262 72% 58%;
@@ -163,15 +163,15 @@ body {
   min-height: 100vh;
 }
 
-/* Gradiente ambiental igual al login — no toca el contenido */
+/* Gradiente ambiental igual al login */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at top left, hsl(var(--accent-soft) / 0.82) 0, transparent 26%),
-    radial-gradient(circle at bottom right, hsl(var(--section-barber) / 0.06) 0, transparent 20%);
+    radial-gradient(ellipse at top left,  hsl(var(--accent) / 0.14) 0, transparent 38%),
+    radial-gradient(ellipse at bottom right, hsl(var(--section-barber) / 0.08) 0, transparent 28%);
   z-index: 0;
 }
 
@@ -378,9 +378,9 @@ button, input, textarea, select { font: inherit; }
 }
 
 .control-dashboard .ant-card {
-  background: hsl(var(--bg-surface));
+  background: hsl(var(--raw-white));
   border-color: hsl(var(--border-default)) !important;
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 1px 4px 0 hsl(var(--raw-black) / 0.07), 0 1px 2px -1px hsl(var(--raw-black) / 0.05);
 }
 
 .control-dashboard .ant-card .ant-card-body { padding: 1rem; }
@@ -544,11 +544,11 @@ button, input, textarea, select { font: inherit; }
    ═══════════════════════════════════════════════════════════ */
 .metric-card {
   overflow: hidden;
-  border-left: 3px solid var(--metric-accent, hsl(var(--accent))) !important;
-  border-top: 1px solid hsl(var(--border-default)) !important;
-  border-right: 1px solid hsl(var(--border-default)) !important;
-  border-bottom: 1px solid hsl(var(--border-default)) !important;
   border-radius: var(--radius-sm) !important;
+  /* Borde izquierdo de acento — sobreescribe el border-color global del dashboard */
+  border-left-width: 3px !important;
+  border-left-style: solid !important;
+  border-left-color: var(--metric-accent, hsl(var(--accent))) !important;
 }
 
 .metric-card__header {
