@@ -163,17 +163,6 @@ body {
   min-height: 100vh;
 }
 
-/* Gradiente ambiental igual al login */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at top left,  hsl(var(--accent) / 0.14) 0, transparent 38%),
-    radial-gradient(ellipse at bottom right, hsl(var(--section-barber) / 0.08) 0, transparent 28%);
-  z-index: 0;
-}
 
 a { color: inherit; text-decoration: none; }
 
@@ -363,10 +352,10 @@ button, input, textarea, select { font: inherit; }
 .control-dashboard { position: relative; }
 
 .control-dashboard .surface-card {
-  background: hsl(var(--bg-surface));
+  background: hsl(var(--raw-white));
   border: 1px solid hsl(var(--border-default));
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 2px 8px -2px hsl(var(--accent) / 0.1), 0 1px 3px 0 hsl(var(--raw-black) / 0.06);
 }
 
 .control-dashboard .ant-card,

@@ -42,11 +42,18 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
   const sessionLabel   = session?.username ?? "admin";
   const sessionInitial = getInitials(session?.username);
 
+  // Gradiente violeta igual al login — aplicado al Layout para no ser tapado por body::before
+  const dashboardBg = [
+    "radial-gradient(ellipse 90% 50% at 12% 0%, hsl(262 100% 93%) 0%, transparent 55%)",
+    "radial-gradient(ellipse 60% 35% at 88% 100%, hsl(262 80% 90%) 0%, transparent 50%)",
+    "hsl(258 55% 91%)",
+  ].join(", ");
+
   return (
     <Layout
       className="control-dashboard"
       hasSider
-      style={{ minHeight: "100vh", background: "hsl(var(--bg-page))" }}
+      style={{ minHeight: "100vh", background: dashboardBg }}
     >
       <ControlSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 
