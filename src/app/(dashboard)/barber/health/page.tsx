@@ -2,51 +2,8 @@ import { Alert, Card, Col, Descriptions, Row } from "antd";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDate, formatNumber } from "@/lib/formatters";
 import { getBarberHealth } from "@/lib/integrations/barber";
+import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
-
-function CompactStat({
-  label,
-  value,
-  tone,
-  hint,
-}: {
-  label: string;
-  value: string | number;
-  tone: "section" | "success" | "warning" | "danger" | "neutral";
-  hint?: string;
-}) {
-  const accent =
-    tone === "success"
-      ? "hsl(var(--status-success))"
-      : tone === "warning"
-        ? "hsl(var(--status-warning))"
-        : tone === "danger"
-          ? "hsl(var(--status-error))"
-          : tone === "neutral"
-            ? "hsl(var(--text-secondary))"
-            : "hsl(var(--section-barber))";
-
-  return (
-    <Card
-      className="surface-card border-0"
-      styles={{ body: { padding: "0.8rem 0.9rem" } }}
-    >
-      <div style={{ display: "grid", gap: 4 }}>
-        <div style={{ color: "hsl(var(--text-muted))", fontSize: 11, fontWeight: 700 }}>
-          {label}
-        </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-          <div style={{ color: accent, fontSize: "clamp(1.2rem, 1.8vw, 1.5rem)", fontWeight: 800, lineHeight: 1 }}>
-            {value}
-          </div>
-          {hint ? (
-            <span style={{ color: "hsl(var(--text-muted))", fontSize: 11.5 }}>{hint}</span>
-          ) : null}
-        </div>
-      </div>
-    </Card>
-  );
-}
 
 async function loadBarberHealth() {
   try {
@@ -75,19 +32,39 @@ export default async function BarberHealthPage() {
 
       <Row gutter={[12, 12]}>
         <Col xs={24} md={8}>
-          <CompactStat label="Estado" value={result.health.status === "ok" ? "Operativo" : "Atencion"} tone={result.health.status === "ok" ? "success" : "warning"} hint={result.health.status.toUpperCase()} />
+          <MetricCard
+            title="Estado"
+            value={result.health.status === "ok" ? "Operativo" : "Atencion"}
+            accentVar="--section-barber"
+            tone={result.health.status === "ok" ? "success" : "warning"}
+            hint={result.health.status.toUpperCase()}
+          />
         </Col>
         <Col xs={24} md={8}>
-          <CompactStat label="Latencia" value={result.health.latencyMs ?? "Sin dato"} tone={result.health.latencyMs && result.health.latencyMs > 300 ? "warning" : "section"} hint={result.health.latencyMs ? "ms" : "Sin lectura"} />
+          <MetricCard
+            title="Latencia"
+            value={result.health.latencyMs ?? "Sin dato"}
+            accentVar="--section-barber"
+            tone={result.health.latencyMs && result.health.latencyMs > 300 ? "warning" : "section"}
+            suffix={result.health.latencyMs ? "ms" : undefined}
+            hint={result.health.latencyMs ? undefined : "Sin lectura"}
+          />
         </Col>
         <Col xs={24} md={8}>
-          <CompactStat label="Ultima lectura" value={formatDate(result.health.timestamp)} tone="neutral" hint="Backend" />
+          <MetricCard
+            title="Ultima lectura"
+            value={formatDate(result.health.timestamp)}
+            accentVar="--section-barber"
+            tone="neutral"
+            hint="Backend"
+          />
         </Col>
       </Row>
+
       <Card
         className="surface-card border-0"
-        styles={{ body: { padding: "0.9rem 1rem 1rem" } }}
-        title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Detalle tecnico</span>}
+        size="small"
+        title="Detalle tecnico"
       >
         <Descriptions bordered size="small" column={1}>
           <Descriptions.Item label="Estado">{result.health.status}</Descriptions.Item>

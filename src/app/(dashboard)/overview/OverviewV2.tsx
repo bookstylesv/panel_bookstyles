@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Alert, Button, Card, Col, Row, Tag } from "antd";
 import { Building2, FileText, Scissors, ShieldCheck, TriangleAlert, Users } from "lucide-react";
 import { DataTable } from "@/components/ui/DataTable";
+import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
 import { getBarberDashboard, getBarberHealth } from "@/lib/integrations/barber";
@@ -64,71 +65,6 @@ function getAccentStyles(accentVar: string) {
   };
 }
 
-function MiniMetricCard({
-  title,
-  value,
-  hint,
-  accentVar,
-  icon,
-}: {
-  title: string;
-  value: string | number;
-  hint: string;
-  accentVar: string;
-  icon: ReactNode;
-}) {
-  return (
-    <Card
-      className="surface-card border-0"
-      styles={{
-        body: {
-          display: "grid",
-          gap: 8,
-          padding: 12,
-          minHeight: 104,
-          borderTop: `3px solid hsl(var(${accentVar}))`,
-        },
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-        <div
-          style={{
-            color: "hsl(var(--text-secondary))",
-            fontSize: 11.5,
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.08em",
-          }}
-        >
-          {title}
-        </div>
-        <div
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 11,
-            display: "grid",
-            placeItems: "center",
-            ...getAccentStyles(accentVar),
-          }}
-        >
-          {icon}
-        </div>
-      </div>
-      <div
-        style={{
-          color: "hsl(var(--text-primary))",
-          fontSize: "clamp(1.4rem, 2vw, 1.8rem)",
-          fontWeight: 800,
-          lineHeight: 1,
-        }}
-      >
-        {value}
-      </div>
-      <div style={{ color: "hsl(var(--text-muted))", fontSize: 12, lineHeight: 1.35 }}>{hint}</div>
-    </Card>
-  );
-}
 
 export default async function OverviewV2() {
   const state = await loadOverview();
@@ -288,7 +224,7 @@ export default async function OverviewV2() {
 
       <Row gutter={[12, 12]}>
         <Col xs={24} sm={12} xl={8}>
-          <MiniMetricCard
+          <MetricCard
             title="Servicios operativos"
             value={`${healthyCount}/3`}
             hint={`${degradedCount} con alerta y ${offlineCount} sin conexion`}
@@ -297,7 +233,7 @@ export default async function OverviewV2() {
           />
         </Col>
         <Col xs={24} sm={12} xl={8}>
-          <MiniMetricCard
+          <MetricCard
             title="Tenants DTE"
             value={state.dteDashboard.status === "fulfilled" ? state.dteDashboard.value.total : "Sin conexion"}
             hint={
@@ -310,7 +246,7 @@ export default async function OverviewV2() {
           />
         </Col>
         <Col xs={24} sm={12} xl={8}>
-          <MiniMetricCard
+          <MetricCard
             title="Tenants Barber"
             value={state.barberDashboard.status === "fulfilled" ? state.barberDashboard.value.total : "Sin conexion"}
             hint={
@@ -323,7 +259,7 @@ export default async function OverviewV2() {
           />
         </Col>
         <Col xs={24} sm={12} xl={8}>
-          <MiniMetricCard
+          <MetricCard
             title="Tenants ERP"
             value={state.erpDashboard.status === "fulfilled" ? state.erpDashboard.value.total : "Pendiente"}
             hint={
@@ -336,7 +272,7 @@ export default async function OverviewV2() {
           />
         </Col>
         <Col xs={24} sm={12} xl={8}>
-          <MiniMetricCard
+          <MetricCard
             title="Tenants activos"
             value={activeTenants}
             hint={`${formatNumber(totalTenants)} tenants totales en el ecosistema`}
@@ -345,7 +281,7 @@ export default async function OverviewV2() {
           />
         </Col>
         <Col xs={24} sm={12} xl={8}>
-          <MiniMetricCard
+          <MetricCard
             title="Alertas DTE"
             value={dteAlerts.length}
             hint={

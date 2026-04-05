@@ -1,49 +1,13 @@
 import Link from "next/link";
 import { Alert, Card, Col, Row, Tag } from "antd";
 import { DataTable } from "@/components/ui/DataTable";
+import { MetricCard } from "@/components/ui/MetricCard";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { BarberTenantsSearch } from "@/components/barber/BarberTenantsSearch";
 import { NewBarberTenantDrawer } from "@/components/barber/NewBarberTenantDrawer";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
 import { getBarberTenants } from "@/lib/integrations/barber";
-
-function CompactStat({
-  label,
-  value,
-  tone,
-  hint,
-}: {
-  label: string;
-  value: string | number;
-  tone: "section" | "success" | "warning" | "neutral";
-  hint?: string;
-}) {
-  const accent =
-    tone === "success"
-      ? "hsl(var(--status-success))"
-      : tone === "warning"
-        ? "hsl(var(--status-warning))"
-        : tone === "neutral"
-          ? "hsl(var(--text-secondary))"
-          : "hsl(var(--section-barber))";
-
-  return (
-    <Card className="surface-card border-0" styles={{ body: { padding: "0.8rem 0.9rem" } }}>
-      <div style={{ display: "grid", gap: 4 }}>
-        <div style={{ color: "hsl(var(--text-muted))", fontSize: 11, fontWeight: 700 }}>
-          {label}
-        </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-          <div style={{ color: accent, fontSize: "clamp(1.2rem, 1.8vw, 1.5rem)", fontWeight: 800, lineHeight: 1 }}>
-            {value}
-          </div>
-          {hint ? <span style={{ color: "hsl(var(--text-muted))", fontSize: 11.5 }}>{hint}</span> : null}
-        </div>
-      </div>
-    </Card>
-  );
-}
 
 async function loadBarberTenants(search: string) {
   try {
@@ -87,31 +51,32 @@ export default async function BarberTenantsPage({
 
       <Row gutter={[12, 12]}>
         <Col xs={24} md={12} xl={6}>
-          <CompactStat label="Coincidencias" value={result.tenants.total} tone="section" hint="Total" />
+          <MetricCard title="Coincidencias" value={result.tenants.total} accentVar="--section-barber" tone="section" hint="Total" />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <CompactStat label="Visibles" value={result.tenants.items.length} tone="neutral" hint={`Pag. ${result.tenants.page}/${result.tenants.pages}`} />
+          <MetricCard title="Visibles" value={result.tenants.items.length} accentVar="--section-barber" tone="neutral" hint={`Pág. ${result.tenants.page}/${result.tenants.pages}`} />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <CompactStat label="Activos" value={activeCount} tone="success" hint="Pagina actual" />
+          <MetricCard title="Activos" value={activeCount} accentVar="--section-barber" tone="success" hint="Página actual" />
         </Col>
         <Col xs={24} md={12} xl={6}>
-          <CompactStat label="Trial / suspendidos" value={`${trialCount} / ${suspendedCount}`} tone="warning" hint="Estado mixto" />
+          <MetricCard title="Trial / suspendidos" value={`${trialCount} / ${suspendedCount}`} accentVar="--section-barber" tone="warning" hint="Estado mixto" />
         </Col>
       </Row>
+
       <Card
         className="surface-card border-0"
-        styles={{ body: { padding: "0.9rem 1rem 1rem" } }}
-        title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Listado de barberias</span>}
+        size="small"
+        title="Listado de barberías"
         extra={<Tag bordered={false} color="processing">{result.tenants.total} coincidencias</Tag>}
       >
         <div style={{ marginBottom: 12 }}>
           <BarberTenantsSearch initialSearch={search} />
         </div>
         <DataTable
-          caption={`Mostrando ${result.tenants.items.length} resultados en la pag. ${result.tenants.page} de ${result.tenants.pages}.`}
+          caption={`Mostrando ${result.tenants.items.length} de ${result.tenants.total} — pág. ${result.tenants.page}/${result.tenants.pages}`}
           columns={[
-            { key: "barberia", title: "Barberia" },
+            { key: "barberia", title: "Barbería" },
             { key: "slug", title: "Slug" },
             { key: "plan", title: "Plan" },
             { key: "estado", title: "Estado" },
