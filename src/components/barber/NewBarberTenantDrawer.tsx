@@ -10,6 +10,7 @@ import {
   Input,
   InputNumber,
   Modal,
+  Radio,
   Select,
   Space,
   Typography,
@@ -25,6 +26,7 @@ type FormValues = {
   email?: string;
   phone?: string;
   city?: string;
+  businessType: "BARBERIA" | "SALON";
   plan: string;
   maxBarbers: number;
   ownerFullName: string;
@@ -77,6 +79,7 @@ export function NewBarberTenantDrawer() {
           email: values.email || undefined,
           phone: values.phone || undefined,
           city: values.city || undefined,
+          businessType: values.businessType,
           plan: values.plan,
           maxBarbers: values.maxBarbers,
           owner: {
@@ -148,7 +151,7 @@ export function NewBarberTenantDrawer() {
           form={form}
           layout="vertical"
           onFinish={handleSubmit}
-          initialValues={{ plan: "TRIAL", maxBarbers: 3 }}
+          initialValues={{ businessType: "BARBERIA", plan: "TRIAL", maxBarbers: 3 }}
         >
           <Divider orientationMargin={0} style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>
             Datos de la barbería
@@ -168,6 +171,13 @@ export function NewBarberTenantDrawer() {
             ]}
           >
             <Input prefix="/" placeholder="barberia-central" />
+          </Form.Item>
+
+          <Form.Item label="Tipo de negocio" name="businessType">
+            <Radio.Group buttonStyle="solid">
+              <Radio.Button value="BARBERIA">Barbería</Radio.Button>
+              <Radio.Button value="SALON">Salón de Belleza</Radio.Button>
+            </Radio.Group>
           </Form.Item>
 
           <Space style={{ width: "100%" }} size={12}>

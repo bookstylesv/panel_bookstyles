@@ -4,6 +4,7 @@ import type { PaginatedResult, ServiceHealth } from "@/lib/integrations/types";
 
 export type BarberPlan = "TRIAL" | "BASIC" | "PRO" | "ENTERPRISE";
 export type BarberStatus = "TRIAL" | "ACTIVE" | "SUSPENDED" | "CANCELLED";
+export type BarberBusinessType = "BARBERIA" | "SALON";
 
 export type BarberTenantListItem = {
   id: number;
@@ -18,6 +19,7 @@ export type BarberTenantListItem = {
   city: string | null;
   country: string | null;
   maxBarbers: number;
+  businessType: BarberBusinessType;
   createdAt: string;
   updatedAt: string;
   _count: {
@@ -93,6 +95,7 @@ export type CreateBarberTenantInput = {
   phone?: string;
   city?: string;
   plan?: BarberPlan;
+  businessType?: BarberBusinessType;
   maxBarbers?: number;
   owner?: { fullName: string; email: string; password: string };
 };

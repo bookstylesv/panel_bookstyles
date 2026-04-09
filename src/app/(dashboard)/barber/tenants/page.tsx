@@ -76,7 +76,8 @@ export default async function BarberTenantsPage({
         <DataTable
           caption={`Mostrando ${result.tenants.items.length} de ${result.tenants.total} — pág. ${result.tenants.page}/${result.tenants.pages}`}
           columns={[
-            { key: "barberia", title: "Barbería" },
+            { key: "barberia", title: "Negocio" },
+            { key: "tipo", title: "Tipo" },
             { key: "slug", title: "Slug" },
             { key: "plan", title: "Plan" },
             { key: "estado", title: "Estado" },
@@ -87,6 +88,7 @@ export default async function BarberTenantsPage({
             key: String(row.id),
             cells: [
               <Link key={`link-${row.id}`} href={`/barber/tenants/${row.id}`}>{row.name}</Link>,
+              <Tag key={`type-${row.id}`} color={row.businessType === "SALON" ? "magenta" : "blue"}>{row.businessType === "SALON" ? "Salón" : "Barbería"}</Tag>,
               row.slug,
               row.plan,
               <Tag key={`status-${row.id}`} color={row.status === "ACTIVE" ? "success" : row.status === "TRIAL" ? "processing" : "error"}>{row.status}</Tag>,

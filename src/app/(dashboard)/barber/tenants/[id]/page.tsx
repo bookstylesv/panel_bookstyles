@@ -124,6 +124,9 @@ export default async function BarberTenantDetailPage({
           >
             <Descriptions bordered size="small" column={1}>
               <Descriptions.Item label="Slug">{tenant.slug}</Descriptions.Item>
+              <Descriptions.Item label="Tipo de negocio">
+                <Tag color={tenant.businessType === "SALON" ? "magenta" : "blue"}>{tenant.businessType === "SALON" ? "Salón de Belleza" : "Barbería"}</Tag>
+              </Descriptions.Item>
               <Descriptions.Item label="Plan">{tenant.plan}</Descriptions.Item>
               <Descriptions.Item label="Estado">
                 <Tag color={tenant.status === "ACTIVE" ? "success" : tenant.status === "TRIAL" ? "processing" : "error"}>{tenant.status}</Tag>
