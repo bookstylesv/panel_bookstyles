@@ -117,6 +117,20 @@ export async function suspendBarberTenant(id: number) {
   });
 }
 
+export type BarberOwner = {
+  id: number;
+  fullName: string;
+  email: string;
+  role: string;
+  createdAt: string;
+};
+
+export async function getBarberTenantOwner(id: number) {
+  return fetchJson<BarberOwner>(`${getBaseUrl()}/tenants/${id}/owner`, {
+    headers: getHeaders(),
+  });
+}
+
 export async function activateBarberTenant(id: number) {
   return fetchJson<{ message: string }>(`${getBaseUrl()}/tenants/${id}/activate`, {
     method: "POST",

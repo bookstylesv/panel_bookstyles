@@ -9,6 +9,8 @@ import { getErrorMessage } from "@/lib/error-message";
 import { formatDateOnly } from "@/lib/formatters";
 import { getBarberTenants } from "@/lib/integrations/barber";
 
+const BARBER_APP_URL = (process.env.BARBER_PANEL_URL ?? "https://speeddan-barberia.vercel.app").replace(/\/$/, "");
+
 async function loadBarberTenants(search: string) {
   try {
     const params = new URLSearchParams(search ? { search } : {});
@@ -46,7 +48,7 @@ export default async function BarberTenantsPage({
         eyebrow="Barber"
         title="Tenants Barber Pro"
         description="Listado centralizado de barberías conectadas a Barber Pro."
-        actions={<NewBarberTenantDrawer />}
+        actions={<NewBarberTenantDrawer barberAppUrl={BARBER_APP_URL} />}
       />
 
       <Row gutter={[12, 12]}>
@@ -83,6 +85,7 @@ export default async function BarberTenantsPage({
             { key: "estado", title: "Estado" },
             { key: "pagoHasta", title: "Pago hasta" },
             { key: "ciudad", title: "Ciudad" },
+            { key: "acceso", title: "URL de acceso" },
           ]}
           rows={result.tenants.items.map((row) => ({
             key: String(row.id),
@@ -94,6 +97,9 @@ export default async function BarberTenantsPage({
               <Tag key={`status-${row.id}`} color={row.status === "ACTIVE" ? "success" : row.status === "TRIAL" ? "processing" : "error"}>{row.status}</Tag>,
               formatDateOnly(row.paidUntil),
               row.city ?? "Sin dato",
+              <Link key={`acceso-${row.id}`} href={`${BARBER_APP_URL}/login/${row.slug}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "hsl(172 78% 28%)", whiteSpace: "nowrap" }}>
+                /login/{row.slug} ↗
+              </Link>,
             ],
           }))}
         />

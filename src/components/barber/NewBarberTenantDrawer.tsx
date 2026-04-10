@@ -38,6 +38,7 @@ type Credentials = {
   slug: string;
   ownerEmail: string;
   ownerPassword: string;
+  loginUrl: string;
 };
 
 function generatePassword() {
@@ -54,7 +55,7 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function NewBarberTenantDrawer() {
+export function NewBarberTenantDrawer({ barberAppUrl }: { barberAppUrl: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -103,6 +104,7 @@ export function NewBarberTenantDrawer() {
         slug: values.slug,
         ownerEmail: values.ownerEmail,
         ownerPassword: values.ownerPassword,
+        loginUrl: `${barberAppUrl}/login/${values.slug}`,
       });
       router.refresh();
     } catch {
@@ -113,7 +115,7 @@ export function NewBarberTenantDrawer() {
   }
 
   function copyCredentials(creds: Credentials) {
-    const text = `Código de empresa: ${creds.slug}\nEmail: ${creds.ownerEmail}\nContraseña: ${creds.ownerPassword}`;
+    const text = `URL de acceso: ${creds.loginUrl}\nCódigo de empresa: ${creds.slug}\nEmail: ${creds.ownerEmail}\nContraseña: ${creds.ownerPassword}`;
     navigator.clipboard.writeText(text);
     messageApi.success("Credenciales copiadas");
   }
@@ -254,6 +256,31 @@ export function NewBarberTenantDrawer() {
       >
         {credentials && (
           <div style={{ marginTop: 8 }}>
+            {/* URL de acceso — lo más importante */}
+            <div
+              style={{
+                background: "hsl(172 78% 28% / 0.08)",
+                border: "1px solid hsl(172 78% 28% / 0.30)",
+                borderRadius: 8,
+                padding: "12px 16px",
+                marginBottom: 10,
+              }}
+            >
+              <Text type="secondary" style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em" }}>URL de acceso del cliente</Text>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                <Text strong style={{ fontSize: 13, wordBreak: "break-all", color: "hsl(172 78% 28%)" }}>
+                  {credentials.loginUrl}
+                </Text>
+                <Button
+                  type="link"
+                  size="small"
+                  icon={<CopyOutlined />}
+                  style={{ padding: 0, flexShrink: 0 }}
+                  onClick={() => { navigator.clipboard.writeText(credentials.loginUrl); messageApi.success("URL copiada"); }}
+                />
+              </div>
+            </div>
+
             <div
               style={{
                 background: "hsl(var(--bg-subtle, 220 13% 96%))",
