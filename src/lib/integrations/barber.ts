@@ -125,6 +125,13 @@ export async function updateBarberTenant(id: number, data: UpdateBarberTenantInp
   });
 }
 
+export async function resetBarberTenantPassword(id: number) {
+  return fetchJson<{ ownerEmail: string; ownerName: string; newPassword: string }>(
+    `${getBaseUrl()}/tenants/${id}/reset-password`,
+    { method: "POST", headers: getHeaders() },
+  );
+}
+
 export async function deleteBarberTenant(id: number) {
   return fetchJson<{ message: string }>(`${getBaseUrl()}/tenants/${id}`, {
     method: "DELETE",
