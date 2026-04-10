@@ -110,6 +110,27 @@ export async function createBarberTenant(data: CreateBarberTenantInput) {
   });
 }
 
+export type UpdateBarberTenantInput = Partial<Omit<CreateBarberTenantInput, 'owner'>> & {
+  status?: BarberStatus;
+  paidUntil?: string | null;
+  trialEndsAt?: string | null;
+};
+
+export async function updateBarberTenant(id: number, data: UpdateBarberTenantInput) {
+  return fetchJson<BarberTenantListItem>(`${getBaseUrl()}/tenants/${id}`, {
+    method: "PUT",
+    headers: { ...getHeaders(), "Content-Type": "application/json" },
+    body: data,
+  });
+}
+
+export async function deleteBarberTenant(id: number) {
+  return fetchJson<{ message: string }>(`${getBaseUrl()}/tenants/${id}`, {
+    method: "DELETE",
+    headers: getHeaders(),
+  });
+}
+
 export async function suspendBarberTenant(id: number) {
   return fetchJson<{ message: string }>(`${getBaseUrl()}/tenants/${id}/suspend`, {
     method: "POST",
