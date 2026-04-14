@@ -59,6 +59,7 @@ const MENU_ITEMS: MenuProps["items"] = [
     children: [
       { key: "/barber/dashboard", label: "Dashboard", icon: <LayoutDashboard size={14} /> },
       { key: "/barber/tenants", label: "Barberias", icon: <Store size={14} /> },
+      { key: "/barber/plans", label: "Planes", icon: <CreditCard size={14} /> },
       { key: "/barber/health", label: "Health", icon: <Activity size={14} /> },
       { key: "/barber/config", label: "Configuracion", icon: <Settings size={14} /> },
     ],
@@ -79,7 +80,7 @@ const ALL_ROUTES = [
   "/dte/dashboard", "/dte/clientes", "/dte/planes", "/dte/health",
   "/dte/auditoria", "/dte/analytics", "/dte/mapa", "/dte/backups",
   "/dte/departamentos", "/dte/municipios", "/dte/tema",
-  "/barber/dashboard", "/barber/tenants", "/barber/health", "/barber/config",
+  "/barber/dashboard", "/barber/tenants", "/barber/plans", "/barber/health", "/barber/config",
   "/erp/dashboard", "/erp/tenants", "/erp/health",
 ];
 

@@ -69,6 +69,64 @@ export async function getBarberTenant(id: number) {
   });
 }
 
+// ── Plan Config ───────────────────────────────────────
+
+export type BarberModules = {
+  appointments: boolean;
+  pos: boolean;
+  clients: boolean;
+  products: boolean;
+  expenses: boolean;
+  reports_basic: boolean;
+  accounts_receivable: boolean;
+  payroll: boolean;
+  billing_dte: boolean;
+  reports_advanced: boolean;
+  branches: boolean;
+  api_integrations: boolean;
+  loyalty: boolean;
+};
+
+export type BarberPlanConfigItem = {
+  id: number;
+  plan: BarberPlan;
+  displayName: string;
+  description: string | null;
+  maxBarbers: number;
+  maxBranches: number;
+  modules: BarberModules;
+  price: string | null;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UpdateBarberPlanConfigInput = {
+  displayName?: string;
+  description?: string;
+  maxBarbers?: number;
+  maxBranches?: number;
+  modules?: BarberModules;
+  price?: number | null;
+  active?: boolean;
+};
+
+export async function getBarberPlanConfigs() {
+  return fetchJson<BarberPlanConfigItem[]>(`${getBaseUrl()}/plans`, {
+    headers: getHeaders(),
+  });
+}
+
+export async function updateBarberPlanConfig(plan: BarberPlan, data: UpdateBarberPlanConfigInput) {
+  return fetchJson<BarberPlanConfigItem>(`${getBaseUrl()}/plans/${plan}`, {
+    method: "PUT",
+    headers: { ...getHeaders(), "Content-Type": "application/json" },
+    body: data,
+  });
+}
+
+// ── Barber Config ─────────────────────────────────────
+
 export type BarberConfig = {
   brandName: string;
   tagline: string;
