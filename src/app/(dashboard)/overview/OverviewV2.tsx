@@ -5,14 +5,15 @@ import { Building2, FileText, Scissors, ShieldCheck, TriangleAlert, Users } from
 import { DataTable } from "@/components/ui/DataTable";
 import { HealthBar } from "@/components/ui/HealthBar";
 import { MetricCard } from "@/components/ui/MetricCard";
+import { MomChart } from "@/components/ui/MomChart";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
 import { getBarberDashboard, getBarberHealth } from "@/lib/integrations/barber";
-import { getDteDashboard, getDteHealth } from "@/lib/integrations/dte";
+import { getDteAnalytics, getDteAudit, getDteDashboard, getDteHealth } from "@/lib/integrations/dte";
 import { getErpDashboard, getErpHealth } from "@/lib/integrations/erp";
 
 async function loadOverview() {
-  const [dteDashboard, dteHealth, barberDashboard, barberHealth, erpDashboard, erpHealth] =
+  const [dteDashboard, dteHealth, barberDashboard, barberHealth, erpDashboard, erpHealth, dteAnalytics, dteAudit] =
     await Promise.allSettled([
       getDteDashboard(),
       getDteHealth(),
@@ -20,6 +21,8 @@ async function loadOverview() {
       getBarberHealth(),
       getErpDashboard(),
       getErpHealth(),
+      getDteAnalytics(),
+      getDteAudit({ limit: 20 }),
     ]);
 
   return {
@@ -29,6 +32,8 @@ async function loadOverview() {
     barberHealth,
     erpDashboard,
     erpHealth,
+    dteAnalytics,
+    dteAudit,
   };
 }
 
@@ -501,6 +506,116 @@ export default async function OverviewV2() {
                 message="No se pudieron cargar alertas DTE"
                 description="Revisa la conexion del servicio para ver vencimientos y cuentas por vencer."
                 style={{ borderRadius: 16 }}
+              />
+            )}
+          </Card>
+        </Col>
+      </Row>
+
+      {/* ── MoM + Activity log ───────────────────────── */}
+      <Row gutter={[12, 12]}>
+        <Col xs={24} xl={14}>
+          <Card
+            className="surface-card border-0"
+            title={
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>
+                  Evolución mensual — DTE
+                </span>
+                <Tag bordered={false} style={{ borderRadius: 999, fontSize: 11, background: "hsl(var(--section-dte) / 0.12)", color: "hsl(var(--section-dte))" }}>
+                  Últimos 6 meses
+                </Tag>
+              </div>
+            }
+            styles={{ body: { padding: "12px 12px 8px" } }}
+          >
+            {state.dteAnalytics.status === "fulfilled" ? (
+              <>
+                <MomChart serie={state.dteAnalytics.value.serie} />
+                <div style={{ display: "flex", gap: 16, marginTop: 8, paddingLeft: 4 }}>
+                  {[
+                    { color: "hsl(var(--section-dte))", label: "Nuevos" },
+                    { color: "#22c55e", label: "Activaciones" },
+                    { color: "#ef4444", label: "Suspensiones" },
+                  ].map(({ color, label }) => (
+                    <span key={label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "hsl(var(--text-muted))" }}>
+                      <span style={{ width: 8, height: 8, borderRadius: 2, background: color, flexShrink: 0 }} />
+                      {label}
+                    </span>
+                  ))}
+                </div>
+                <div style={{ marginTop: 6, fontSize: 11, color: "hsl(var(--text-muted))" }}>
+                  Barber Pro y ERP Full Pro: endpoint analytics pendiente
+                </div>
+              </>
+            ) : (
+              <Alert type="warning" showIcon message="No se pudo cargar la serie mensual de DTE" style={{ borderRadius: 12 }} />
+            )}
+          </Card>
+        </Col>
+
+        <Col xs={24} xl={10}>
+          <Card
+            className="surface-card border-0"
+            title={<span style={{ fontSize: 13, fontWeight: 700, color: "hsl(var(--text-secondary))" }}>Actividad reciente — DTE</span>}
+            styles={{ body: { padding: 0 } }}
+          >
+            {state.dteAudit.status === "fulfilled" && state.dteAudit.value.items.length > 0 ? (
+              <div style={{ maxHeight: 290, overflowY: "auto" }}>
+                {state.dteAudit.value.items.map((item) => (
+                  <div
+                    key={item.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 10,
+                      padding: "8px 14px",
+                      borderBottom: "1px solid hsl(var(--border-default))",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 8,
+                        background: item.actor_tipo === "sistema"
+                          ? "hsl(var(--section-dte) / 0.12)"
+                          : "hsl(var(--section-barber) / 0.12)",
+                        color: item.actor_tipo === "sistema"
+                          ? "hsl(var(--section-dte))"
+                          : "hsl(var(--section-barber))",
+                        display: "grid",
+                        placeItems: "center",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {item.actor_tipo === "sistema" ? "SYS" : "SA"}
+                    </div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "hsl(var(--text-primary))", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {item.accion}
+                      </div>
+                      <div style={{ fontSize: 11, color: "hsl(var(--text-muted))" }}>
+                        {item.tenant_nombre ? `${item.tenant_nombre} · ` : ""}
+                        {item.actor_nombre ?? item.actor_username ?? item.actor_tipo}
+                        {" · "}
+                        {new Date(item.created_at).toLocaleString("es-SV", {
+                          month: "short", day: "numeric",
+                          hour: "2-digit", minute: "2-digit",
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Alert
+                type="info"
+                showIcon
+                message="Sin actividad reciente o servicio no disponible"
+                style={{ borderRadius: 12, margin: 12 }}
               />
             )}
           </Card>
