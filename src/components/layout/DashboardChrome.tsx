@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { Avatar, Button, Layout, Space } from "antd";
-import { Menu as MenuIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Avatar, Button, Layout, Space, Tooltip } from "antd";
+import { Menu as MenuIcon, Moon, Sun } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { ControlSidebar } from "@/components/layout/ControlSidebar";
 import { useAuth } from "@/context/AuthContext";
+import {
+  CONTROL_THEME_STORAGE_KEY,
+  applyControlThemeValues,
+  getControlThemePreset,
+} from "@/lib/control-theme";
 
 const { Header, Content } = Layout;
 
@@ -37,6 +42,27 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
   const router      = useRouter();
   const { session } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // ── Dark mode toggle ───────────────────────────────────
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const raw = window.localStorage.getItem(CONTROL_THEME_STORAGE_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as { id?: string };
+        setIsDark(parsed.id === "dark-steel");
+      } catch { /* ignore */ }
+    }
+  }, []);
+
+  function toggleTheme() {
+    const nextId    = isDark ? "arctic-teal" : "dark-steel";
+    const preset    = getControlThemePreset(nextId);
+    applyControlThemeValues(document.documentElement.style, preset.values);
+    window.localStorage.setItem(CONTROL_THEME_STORAGE_KEY, JSON.stringify({ id: nextId }));
+    setIsDark(!isDark);
+  }
 
   const active         = SECTION_META.find((s) => s.matcher(pathname)) ?? SECTION_META[SECTION_META.length - 1];
   const onOverview     = pathname === "/overview";
@@ -96,8 +122,18 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
               </Badge>
             </Space>
 
-            {/* Right: overview link + status + user chip */}
+            {/* Right: dark toggle + overview link + status + user chip */}
             <Space size={8} align="center">
+              <Tooltip title={isDark ? "Modo claro" : "Modo oscuro"} placement="bottom">
+                <Button
+                  type="text"
+                  size="small"
+                  onClick={toggleTheme}
+                  icon={isDark ? <Sun size={15} /> : <Moon size={15} />}
+                  style={{ color: "hsl(var(--text-muted))" }}
+                />
+              </Tooltip>
+
               {!onOverview && (
                 <Button
                   size="small"
