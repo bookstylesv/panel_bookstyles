@@ -16,7 +16,8 @@ import {
   Typography,
   message,
 } from "antd";
-import { PlusOutlined, CopyOutlined, KeyOutlined } from "@ant-design/icons";
+import { PlusOutlined, CopyOutlined, KeyOutlined, TeamOutlined } from "@ant-design/icons";
+import Link from "next/link";
 
 const { Text } = Typography;
 
@@ -35,6 +36,7 @@ type FormValues = {
 };
 
 type Credentials = {
+  tenantId: number;
   slug: string;
   ownerEmail: string;
   ownerPassword: string;
@@ -104,6 +106,7 @@ export function NewBarberTenantDrawer({ barberAppUrl }: { barberAppUrl: string }
       setOpen(false);
       form.resetFields();
       setCredentials({
+        tenantId: data.data?.id ?? data.id,
         slug: values.slug,
         ownerEmail: values.ownerEmail,
         ownerPassword: values.ownerPassword,
@@ -254,7 +257,21 @@ export function NewBarberTenantDrawer({ barberAppUrl }: { barberAppUrl: string }
         title={`${typeLabel} creada exitosamente`}
         onCancel={() => setCredentials(null)}
         footer={
-          <Button type="primary" onClick={() => setCredentials(null)}>Listo</Button>
+          <Space>
+            <Button onClick={() => setCredentials(null)}>Cerrar</Button>
+            {credentials && (
+              <Link href={`/barber/tenants/${credentials.tenantId}`}>
+                <Button
+                  type="primary"
+                  icon={<TeamOutlined />}
+                  onClick={() => setCredentials(null)}
+                  style={{ background: "hsl(var(--section-barber))", borderColor: "hsl(var(--section-barber))" }}
+                >
+                  Configurar equipo
+                </Button>
+              </Link>
+            )}
+          </Space>
         }
       >
         {credentials && (

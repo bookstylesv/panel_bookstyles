@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button, message, Modal, Space, Table, Tag, Tooltip, Typography } from "antd";
-import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined, CopyOutlined, KeyOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined, CopyOutlined, KeyOutlined, TeamOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import type { BarberTenantListItem } from "@/lib/integrations/barber";
 import { EditBarberTenantDrawer } from "./EditBarberTenantDrawer";
@@ -188,6 +188,15 @@ export function BarberTenantsTable({
       align: "center",
       render: (_, row) => (
         <Space size={4}>
+          <Tooltip title="Gestionar equipo (roles)">
+            <Link href={`/barber/tenants/${row.id}`}>
+              <Button
+                size="small"
+                icon={<TeamOutlined />}
+                style={{ color: "hsl(var(--section-barber))", borderColor: "hsl(var(--section-barber))" }}
+              />
+            </Link>
+          </Tooltip>
           <Tooltip title="Editar">
             <Button size="small" icon={<EditOutlined />} onClick={() => setEditingId(row.id)} />
           </Tooltip>
