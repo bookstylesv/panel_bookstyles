@@ -32,7 +32,7 @@ const ROLE_META: Record<BarberTeamRole, {
     description: "Acceso a todos los módulos operativos de su sucursal asignada.",
     icon:        <TeamOutlined />,
   },
-  USUARIO: {
+  USERS: {
     label:       "Usuario",
     color:       "default",
     description: "Acceso limitado. El Administrador le asigna módulos desde el ERP.",
@@ -260,7 +260,7 @@ function RoleCard({ role, user, tenantId, branches, onCreated }: RoleCardProps) 
             </Form.Item>
           )}
 
-          {role === "USUARIO" && (
+          {role === "USERS" && (
             <div style={{
               background:   "hsl(var(--bg-subtle, 220 13% 96%))",
               border:       "1px solid hsl(var(--border-default))",
@@ -391,7 +391,7 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, branches 
 
   const superadmin = team.find(u => u.role === "SUPERADMIN") ?? null;
   const gerente    = team.find(u => u.role === "GERENTE")    ?? null;
-  const usuario    = team.find(u => u.role === "USUARIO")    ?? null;
+  const usuario    = team.find(u => u.role === "USERS")      ?? null;
 
   const handleCreated = useCallback((user: BarberTeamUser, password: string) => {
     setTeam(prev => [...prev, user]);
@@ -471,10 +471,10 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, branches 
             />
           </Col>
 
-          {/* USUARIO */}
+          {/* USERS */}
           <Col xs={24} md={12}>
             <RoleCard
-              role="USUARIO"
+              role="USERS"
               user={usuario}
               tenantId={tenantId}
               branches={branches}

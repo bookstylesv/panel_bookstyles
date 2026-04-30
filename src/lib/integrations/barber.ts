@@ -272,9 +272,9 @@ export async function getBarberTenantBranches(tenantId: number) {
   );
 }
 
-// ── Equipo del tenant (SUPERADMIN, GERENTE, USUARIO) ─────────────────────────
+// ── Equipo del tenant (SUPERADMIN, GERENTE, USERS) ─────────────────────────
 
-export type BarberTeamRole = "SUPERADMIN" | "GERENTE" | "USUARIO";
+export type BarberTeamRole = "SUPERADMIN" | "GERENTE" | "USERS";
 
 export type BarberTeamUser = {
   id:           number;
