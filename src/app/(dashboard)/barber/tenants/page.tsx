@@ -9,10 +9,11 @@ import { getBarberTenants } from "@/lib/integrations/barber";
 
 const BARBER_APP_URL = (process.env.BARBER_PANEL_URL ?? "https://barber-pro-swart.vercel.app").replace(/\/$/, "");
 
-async function loadBarberTenants(search: string) {
+async function loadBarberTenants(search: string, page: number, limit: number) {
   try {
-    const params = new URLSearchParams(search ? { search } : {});
-    const tenants = await getBarberTenants(params);
+    const raw: Record<string, string> = { page: String(page), limit: String(limit) };
+    if (search) raw.search = search;
+    const tenants = await getBarberTenants(new URLSearchParams(raw));
     return { tenants };
   } catch (cause) {
     return { error: getErrorMessage(cause) };
@@ -22,10 +23,12 @@ async function loadBarberTenants(search: string) {
 export default async function BarberTenantsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<{ search?: string; page?: string; limit?: string }>;
 }) {
-  const { search = "" } = await searchParams;
-  const result = await loadBarberTenants(search);
+  const { search = "", page: pageStr = "1", limit: limitStr = "25" } = await searchParams;
+  const page = Math.max(1, parseInt(pageStr, 10) || 1);
+  const limit = [10, 25, 50, 100].includes(parseInt(limitStr, 10)) ? parseInt(limitStr, 10) : 25;
+  const result = await loadBarberTenants(search, page, limit);
 
   if ("error" in result) {
     return (
@@ -73,7 +76,13 @@ export default async function BarberTenantsPage({
         <div style={{ marginBottom: 12 }}>
           <BarberTenantsSearch initialSearch={search} />
         </div>
-        <BarberTenantsTable items={result.tenants.items} barberAppUrl={BARBER_APP_URL} />
+        <BarberTenantsTable
+          items={result.tenants.items}
+          barberAppUrl={BARBER_APP_URL}
+          total={result.tenants.total}
+          currentPage={result.tenants.page}
+          pageSize={result.tenants.limit}
+        />
       </Card>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button, message, Modal, Space, Table, Tag, Tooltip, Typography } from "antd";
 import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined, CopyOutlined, KeyOutlined, TeamOutlined } from "@ant-design/icons";
@@ -28,11 +28,18 @@ type ResetResult = { ownerEmail: string; ownerName: string; newPassword: string;
 export function BarberTenantsTable({
   items,
   barberAppUrl,
+  total,
+  currentPage,
+  pageSize,
 }: {
   items: BarberTenantListItem[];
   barberAppUrl: string;
+  total: number;
+  currentPage: number;
+  pageSize: number;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [messageApi, contextHolder] = message.useMessage();
   const [modal, contextHolderModal] = Modal.useModal();
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -232,7 +239,20 @@ export function BarberTenantsTable({
         columns={columns}
         dataSource={items}
         rowKey="id"
-        pagination={false}
+        pagination={{
+          total,
+          current: currentPage,
+          pageSize,
+          pageSizeOptions: [10, 25, 50, 100],
+          showSizeChanger: true,
+          showTotal: (t, [from, to]) => `${from}–${to} de ${t} barberías`,
+          onChange: (page, size) => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set("page", String(page));
+            params.set("limit", String(size));
+            router.push(`/barber/tenants?${params.toString()}`);
+          },
+        }}
         locale={{ emptyText: "Sin barberías registradas" }}
       />
 
