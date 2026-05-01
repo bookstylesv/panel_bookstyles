@@ -444,7 +444,6 @@ button, input, textarea, select { font: inherit; }
   background: hsl(var(--bg-surface)) !important;
   border-color: hsl(var(--border-default)) !important;
   box-shadow: var(--shadow-card);
-  overflow: visible !important;
 }
 
 .control-dashboard .ant-card .ant-card-body { padding: 1rem; }
