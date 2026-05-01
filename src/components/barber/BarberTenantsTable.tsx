@@ -187,13 +187,13 @@ export function BarberTenantsTable({
     {
       key: "acceso",
       title: "Acceso",
-      width: 115,
+      width: 90,
       render: (_, row) => (
         <Link
           href={`${barberAppUrl}/login/${row.slug}`}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: 11, color: "hsl(var(--section-barber))", whiteSpace: "nowrap" }}
+          style={{ fontSize: 11, color: "hsl(var(--section-barber))", wordBreak: "break-all" }}
         >
           /{row.slug} ↗
         </Link>
