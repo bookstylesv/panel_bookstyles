@@ -1,5 +1,6 @@
-import { Alert, Card, Col, Descriptions, Row, Tag } from "antd";
-import { LinkOutlined, UserOutlined, ShopOutlined } from "@ant-design/icons";
+import { Alert, Button, Card, Col, Descriptions, Row, Tag } from "antd";
+import { LinkOutlined, UserOutlined, ShopOutlined, ImportOutlined } from "@ant-design/icons";
+import Link from "next/link";
 import { getErrorMessage } from "@/lib/error-message";
 import { formatDate } from "@/lib/formatters";
 import {
@@ -109,7 +110,14 @@ export default async function BarberTenantDetailPage({
             Detalle operativo del tenant Barber Pro.
           </p>
         </div>
-        <BarberTenantActions tenantId={tenant.id} status={tenant.status} />
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <Link href={`/barber/tenants/${tenant.id}/import`}>
+            <Button icon={<ImportOutlined />} style={{ borderColor: "hsl(var(--section-barber))", color: "hsl(var(--section-barber))" }}>
+              Importar datos
+            </Button>
+          </Link>
+          <BarberTenantActions tenantId={tenant.id} status={tenant.status} />
+        </div>
       </div>
 
       {/* URL de acceso — tarjeta destacada */}
