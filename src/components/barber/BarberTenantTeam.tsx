@@ -390,12 +390,13 @@ interface Props {
 }
 
 export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError: initialTeamError, branches: initialBranches }: Props) {
-  const [team, setTeam]           = useState<BarberTeamUser[]>(initialTeam);
-  const [branches, setBranches]   = useState<BarberBranchItem[]>(initialBranches);
-  const [teamError, setTeamError] = useState(initialTeamError);
-  const [reloading, setReloading] = useState(false);
-  const [cred, setCred]           = useState<CreatedCredential | null>(null);
-  const [messageApi, ctx]         = message.useMessage();
+  const [team, setTeam]               = useState<BarberTeamUser[]>(initialTeam);
+  const [branches, setBranches]       = useState<BarberBranchItem[]>(initialBranches);
+  const [teamError, setTeamError]     = useState(initialTeamError);
+  const [teamErrorMsg, setTeamErrorMsg] = useState<string | null>(null);
+  const [reloading, setReloading]     = useState(false);
+  const [cred, setCred]               = useState<CreatedCredential | null>(null);
+  const [messageApi, ctx]             = message.useMessage();
 
   // Si el SSR falló al cargar el equipo, reintentarlo desde el cliente
   useEffect(() => {
@@ -411,17 +412,33 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
         fetch(`/api/panel/barber/tenants/${tenantId}/users`),
         fetch(`/api/panel/barber/tenants/${tenantId}/branches`),
       ]);
+
       if (teamRes.ok) {
         const data = await teamRes.json() as { data?: BarberTeamUser[] };
         if (Array.isArray(data.data)) {
           setTeam(data.data);
           setTeamError(false);
+          setTeamErrorMsg(null);
         }
+      } else {
+        const errData = await teamRes.json().catch(() => ({})) as { error?: { message?: string } | string };
+        const msg =
+          typeof errData.error === "string"
+            ? errData.error
+            : (errData.error as { message?: string } | undefined)?.message
+              ?? `Error ${teamRes.status} al cargar equipo`;
+        setTeamErrorMsg(msg);
+        setTeamError(true);
       }
+
       if (branchRes.ok) {
         const data = await branchRes.json() as { data?: BarberBranchItem[] };
         if (Array.isArray(data.data)) setBranches(data.data);
       }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Error de conexión";
+      setTeamErrorMsg(msg);
+      setTeamError(true);
     } finally {
       setReloading(false);
     }
@@ -465,7 +482,11 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
             showIcon
             style={{ marginBottom: 12 }}
             message="No se pudo cargar el equipo desde el servidor"
-            description="Los usuarios ya creados podrían no verse. Haz clic en 'Recargar equipo' para intentar de nuevo."
+            description={
+              teamErrorMsg
+                ? `Error: ${teamErrorMsg}`
+                : "Los usuarios ya creados podrían no verse. Haz clic en 'Recargar equipo' para intentar de nuevo."
+            }
           />
         )}
 
