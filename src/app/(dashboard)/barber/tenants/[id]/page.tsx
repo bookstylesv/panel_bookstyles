@@ -164,9 +164,9 @@ export default async function BarberTenantDetailPage({
         <Col xs={24} md={12} xl={6}>
           <CompactStat
             label="Actividad"
-            value={tenant._count.users + tenant._count.barbers + tenant._count.appointments}
+            value={(tenant._count?.users ?? 0) + (tenant._count?.barbers ?? 0) + (tenant._count?.appointments ?? 0)}
             tone="section"
-            hint={`${tenant._count.users} usuarios · ${tenant._count.barbers} barberos · ${tenant._count.appointments} citas`}
+            hint={`${tenant._count?.users ?? 0} usuarios · ${tenant._count?.barbers ?? 0} barberos · ${tenant._count?.appointments ?? 0} citas`}
           />
         </Col>
       </Row>
