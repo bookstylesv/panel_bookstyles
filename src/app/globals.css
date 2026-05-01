@@ -948,15 +948,6 @@ button, input, textarea, select { font: inherit; }
     font-size: 1.65rem;
   }
 
-  /* Tablas scrollables en móvil */
-  .control-dashboard .ant-table-wrapper {
-    overflow-x: auto !important;
-  }
-
-  .control-dashboard .ant-table {
-    min-width: 640px;
-  }
-
   /* HealthBar en móvil: columna */
   .health-bar-wrap {
     flex-direction: column;

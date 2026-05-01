@@ -260,7 +260,7 @@ export function BarberTenantsTable({
         columns={columns}
         dataSource={items}
         rowKey="id"
-        scroll={{ x: 1280 }}
+        scroll={{ x: "max-content" }}
         pagination={{
           total,
           current: currentPage,
