@@ -23,7 +23,7 @@ const ROLE_META: Record<BarberTeamRole, {
   SUPERADMIN: {
     label:       "Administrador",
     color:       "purple",
-    description: "Acceso total al ERP. Gestiona usuarios, módulos y configuración.",
+    description: "Acceso total al ERP administrativo. Gestiona usuarios, módulos y configuración.",
     icon:        <LockOutlined />,
   },
   GERENTE: {
@@ -35,7 +35,7 @@ const ROLE_META: Record<BarberTeamRole, {
   USERS: {
     label:       "Usuario",
     color:       "default",
-    description: "Acceso limitado. El Administrador le asigna módulos desde el ERP.",
+    description: "Acceso limitado al ERP. El Administrador le asigna módulos desde el sistema.",
     icon:        <UserOutlined />,
   },
 };
@@ -462,9 +462,9 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: teamError ? 10 : 14, flexWrap: "wrap" }}>
           <TeamOutlined style={{ color: "hsl(var(--section-barber))", fontSize: 16 }} />
           <Title level={5} style={{ margin: 0, color: "hsl(var(--text-secondary))" }}>
-            Equipo del sistema
+            Equipo con acceso al ERP
           </Title>
-          <Tag style={{ fontSize: 11 }}>4 roles</Tag>
+          <Tag style={{ fontSize: 11 }}>4 accesos</Tag>
           <Button
             size="small"
             icon={<ReloadOutlined />}
@@ -509,7 +509,7 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
               }
             >
               <Text type="secondary" style={{ fontSize: 12, display: "block", marginBottom: owner ? 12 : 0 }}>
-                Vista ejecutiva — solo dashboard y métricas. Se crea junto con el tenant.
+                Acceso ejecutivo al ERP — solo dashboard y métricas. Se crea junto con el tenant.
               </Text>
               {owner ? (
                 <Descriptions bordered size="small" column={1} style={{ marginTop: 8 }}>
@@ -560,9 +560,18 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
             />
           </Col>
         </Row>
+
+        <Alert
+          type="info"
+          showIcon
+          style={{ marginTop: 12 }}
+          message="Roles operativos fuera de esta seccion"
+          description="CLIENT y BARBER existen en Barber Pro para reservas, agenda, citas, clientes, comisiones y reportes. No se crean aqui porque no tienen acceso al ERP administrativo."
+        />
       </div>
 
       <CredentialsModal cred={cred} onClose={() => setCred(null)} />
     </>
   );
 }
+
