@@ -13,3 +13,7 @@ yarn-error.log*
 pnpm-debug.log*
 .claude/
 plan_panel_control.txt
+tmp/
+.secrets/
+*.secret
+*.token
