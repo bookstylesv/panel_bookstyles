@@ -73,18 +73,24 @@ export async function getBarberTenant(id: number) {
 
 // Claves de módulo — deben coincidir exactamente con MODULE_KEYS en module-guard.ts de BarberPro
 export type BarberModules = {
-  pos:          boolean; // POS + Turnos de Caja
-  pos_dte:      boolean; // Documentos / Facturación DTE
-  appointments: boolean; // Citas y Caja de Citas
+  pos:          boolean; // POS
+  pos_turnos:   boolean; // Turnos de Caja
+  pos_dte:      boolean; // Documentos / Facturaci?n DTE
+  appointments: boolean; // Citas / Agenda
+  billing:      boolean; // Caja de Citas / Agenda
   clients:      boolean; // Clientes
-  loyalty:      boolean; // Fidelización (Puntos y Tarjetas)
+  loyalty:      boolean; // Fidelizaci?n (Puntos y Tarjetas)
   barbers:      boolean; // Barberos / Estilistas
   services:     boolean; // Servicios / Tratamientos
-  products:     boolean; // Productos, Inventario y Compras
-  expenses:     boolean; // Gastos y Cuentas por Pagar
+  compras:      boolean; // Compras
+  proveedores:  boolean; // Proveedores
+  productos:    boolean; // Productos
+  inventario:   boolean; // Inventario
+  gastos:       boolean; // Gastos
+  cxp:          boolean; // Cuentas por Pagar
   payroll:      boolean; // Planilla
   branches:     boolean; // Sucursales
-  settings:     boolean; // Configuración del sistema
+  settings:     boolean; // Configuraci?n del sistema
 };
 
 export type BarberPlanConfigItem = {

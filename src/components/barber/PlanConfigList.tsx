@@ -21,18 +21,24 @@ const SYSTEM_COLORS: Record<string, string> = {
 };
 
 const MODULE_LABELS: Record<keyof BarberModules, string> = {
-  pos:          "POS y Turnos de Caja",
-  pos_dte:      "Documentos / Facturación DTE",
-  appointments: "Citas y Caja de Citas",
+  pos:          "POS",
+  pos_turnos:   "Turnos de Caja",
+  pos_dte:      "Documentos / Facturaci?n DTE",
+  appointments: "Citas / Agenda",
+  billing:      "Caja de Citas / Agenda",
   clients:      "Clientes",
-  loyalty:      "Fidelización (Puntos y Tarjetas)",
+  loyalty:      "Fidelizaci?n (Puntos y Tarjetas)",
   barbers:      "Barberos / Estilistas",
   services:     "Servicios / Tratamientos",
-  products:     "Productos, Inventario y Compras",
-  expenses:     "Gastos y Cuentas por Pagar",
+  compras:      "Compras",
+  proveedores:  "Proveedores",
+  productos:    "Productos",
+  inventario:   "Inventario",
+  gastos:       "Gastos",
+  cxp:          "Cuentas por Pagar",
   payroll:      "Planilla",
   branches:     "Sucursales",
-  settings:     "Configuración del sistema",
+  settings:     "Configuraci?n del sistema",
 };
 
 const MODULE_KEYS = Object.keys(MODULE_LABELS) as (keyof BarberModules)[];
@@ -40,6 +46,25 @@ const MODULE_KEYS = Object.keys(MODULE_LABELS) as (keyof BarberModules)[];
 const DEFAULT_MODULES: BarberModules = Object.fromEntries(
   MODULE_KEYS.map((k) => [k, false])
 ) as BarberModules;
+
+const LEGACY_MODULE_GROUPS: Record<string, (keyof BarberModules)[]> = {
+  pos: ["pos", "pos_turnos"],
+  appointments: ["appointments", "billing"],
+  products: ["compras", "proveedores", "productos", "inventario"],
+  expenses: ["gastos", "cxp"],
+  billing_dte: ["pos_dte"],
+  dte: ["pos_dte"],
+};
+
+function normalizeModules(modules: Partial<Record<string, boolean>> | null | undefined): BarberModules {
+  const normalized = { ...DEFAULT_MODULES };
+  for (const [key, enabled] of Object.entries(modules ?? {})) {
+    if (typeof enabled !== "boolean") continue;
+    const targets = LEGACY_MODULE_GROUPS[key] ?? (MODULE_KEYS.includes(key as keyof BarberModules) ? [key as keyof BarberModules] : []);
+    for (const target of targets) normalized[target] = enabled;
+  }
+  return normalized;
+}
 
 // ─── PlanCard ────────────────────────────────────────────────────────────────
 
@@ -51,7 +76,7 @@ interface PlanCardProps {
 function PlanCard({ config: initial, onDeleted }: PlanCardProps) {
   const [saving, setSaving]         = useState(false);
   const [deleting, setDeleting]     = useState(false);
-  const [modules, setModules]       = useState<BarberModules>({ ...DEFAULT_MODULES, ...initial.modules });
+  const [modules, setModules]       = useState<BarberModules>(() => normalizeModules(initial.modules));
   const [maxBarbers, setMaxBarbers] = useState(initial.maxBarbers);
   const [maxBranches, setMaxBranches] = useState(initial.maxBranches);
   const [messageApi, ctx]           = message.useMessage();
