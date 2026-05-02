@@ -14,6 +14,7 @@ import type {
 } from "@/lib/integrations/barber";
 
 const { Text, Title } = Typography;
+type AccessRole = "OWNER" | BarberTeamRole;
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
@@ -45,6 +46,129 @@ function generatePassword() {
   return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
 
+function getRoleLabel(role: AccessRole) {
+  return role === "OWNER" ? "Propietario" : ROLE_META[role].label;
+}
+
+function getRoleColor(role: AccessRole) {
+  return role === "OWNER" ? "gold" : ROLE_META[role].color;
+}
+
+type PasswordChangeResult = {
+  userId:      number;
+  userEmail:   string;
+  userName:    string;
+  role:        AccessRole;
+  newPassword: string;
+};
+
+function ChangePasswordButton({
+  tenantId,
+  userId,
+  role,
+  fullName,
+  email,
+  onChanged,
+}: {
+  tenantId:  number;
+  userId:    number;
+  role:      AccessRole;
+  fullName:  string;
+  email:     string;
+  onChanged: (result: PasswordChangeResult) => void;
+}) {
+  const [open, setOpen]     = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form]              = Form.useForm();
+  const [messageApi, ctx]   = message.useMessage();
+
+  async function handleSubmit(values: { password?: string }) {
+    const password = values.password?.trim() || generatePassword();
+    if (password.length < 8) {
+      messageApi.error("La contrasena debe tener al menos 8 caracteres");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/panel/barber/tenants/${tenantId}/users/${userId}/reset-password`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ password }),
+      });
+      const data = await res.json() as { data?: PasswordChangeResult; error?: { message?: string } | string };
+
+      if (!res.ok || !data.data) {
+        const errMsg =
+          typeof data.error === "string"
+            ? data.error
+            : data.error?.message ?? "No se pudo cambiar la contrasena";
+        messageApi.error(errMsg);
+        return;
+      }
+
+      onChanged(data.data);
+      setOpen(false);
+      form.resetFields();
+    } catch {
+      messageApi.error("Error de conexion");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <>
+      {ctx}
+      <Button size="small" icon={<KeyOutlined />} onClick={() => setOpen(true)}>
+        Cambiar contrasena
+      </Button>
+      <Modal
+        title={`Cambiar contrasena - ${getRoleLabel(role)}`}
+        open={open}
+        onCancel={() => { setOpen(false); form.resetFields(); }}
+        footer={[
+          <Button key="cancel" onClick={() => { setOpen(false); form.resetFields(); }}>
+            Cancelar
+          </Button>,
+          <Button key="save" type="primary" loading={saving} onClick={() => form.submit()}>
+            Guardar contrasena
+          </Button>,
+        ]}
+      >
+        <div style={{ marginBottom: 14 }}>
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            {fullName} - {email}
+          </Text>
+        </div>
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="password"
+            label="Nueva contrasena"
+            rules={[{ min: 8, message: "Minimo 8 caracteres" }]}
+            extra="Puedes dejarla vacia para generar una automaticamente."
+          >
+            <Input.Password
+              placeholder="Minimo 8 caracteres"
+              addonAfter={
+                <Button
+                  type="link"
+                  size="small"
+                  icon={<KeyOutlined />}
+                  style={{ padding: 0, height: "auto" }}
+                  onClick={() => form.setFieldValue("password", generatePassword())}
+                >
+                  Generar
+                </Button>
+              }
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
+}
+
 // ── Tarjeta de un rol ─────────────────────────────────────────────────────────
 
 interface RoleCardProps {
@@ -53,9 +177,10 @@ interface RoleCardProps {
   tenantId:   number;
   branches:   BarberBranchItem[];
   onCreated:  (user: BarberTeamUser, password: string) => void;
+  onPasswordChanged: (result: PasswordChangeResult) => void;
 }
 
-function RoleCard({ role, user, tenantId, branches, onCreated }: RoleCardProps) {
+function RoleCard({ role, user, tenantId, branches, onCreated, onPasswordChanged }: RoleCardProps) {
   const meta               = ROLE_META[role];
   const [open, setOpen]    = useState(false);
   const [saving, setSaving] = useState(false);
@@ -169,6 +294,16 @@ function RoleCard({ role, user, tenantId, branches, onCreated }: RoleCardProps) 
               <Tag color={user.active ? "success" : "error"}>
                 {user.active ? "Activo" : "Inactivo"}
               </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="Contrasena">
+              <ChangePasswordButton
+                tenantId={tenantId}
+                userId={user.id}
+                role={role}
+                fullName={user.fullName}
+                email={user.email}
+                onChanged={onPasswordChanged}
+              />
             </Descriptions.Item>
           </Descriptions>
         )}
@@ -285,10 +420,11 @@ function RoleCard({ role, user, tenantId, branches, onCreated }: RoleCardProps) 
 // ── Credenciales modal (aparece al crear cualquier usuario) ───────────────────
 
 interface CreatedCredential {
-  role:     BarberTeamRole;
+  role:     AccessRole;
   fullName: string;
   email:    string;
   password: string;
+  action:   "created" | "password";
 }
 
 function CredentialsModal({
@@ -301,11 +437,15 @@ function CredentialsModal({
   const [messageApi, ctx] = message.useMessage();
   if (!cred) return null;
 
-  const meta = ROLE_META[cred.role];
+  const roleLabel = getRoleLabel(cred.role);
+  const roleColor = getRoleColor(cred.role);
+  const modalTitle = cred.action === "created"
+    ? `${roleLabel} creado exitosamente`
+    : `Contrasena actualizada - ${roleLabel}`;
 
   function copyAll() {
     if (!cred) return;
-    const text = `Rol: ${meta.label}\nEmail: ${cred.email}\nContraseña: ${cred.password}`;
+    const text = `Rol: ${roleLabel}\nEmail: ${cred.email}\nContrasena: ${cred.password}`;
     navigator.clipboard.writeText(text);
     messageApi.success("Credenciales copiadas");
   }
@@ -315,7 +455,7 @@ function CredentialsModal({
       {ctx}
       <Modal
         open={!!cred}
-        title={`${meta.label} creado exitosamente`}
+        title={modalTitle}
         onCancel={onClose}
         footer={<Button type="primary" onClick={onClose}>Listo</Button>}
       >
@@ -331,7 +471,7 @@ function CredentialsModal({
               Rol
             </Text>
             <div>
-              <Tag color={meta.color} style={{ fontWeight: 700, marginTop: 4 }}>{meta.label}</Tag>
+              <Tag color={roleColor} style={{ fontWeight: 700, marginTop: 4 }}>{roleLabel}</Tag>
             </div>
           </div>
 
@@ -450,8 +590,19 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
 
   const handleCreated = useCallback((user: BarberTeamUser, password: string) => {
     setTeam(prev => [...prev, user]);
-    setCred({ role: user.role as BarberTeamRole, fullName: user.fullName, email: user.email, password });
+    setCred({ role: user.role as BarberTeamRole, fullName: user.fullName, email: user.email, password, action: "created" });
     messageApi.success(`${ROLE_META[user.role as BarberTeamRole].label} creado correctamente`);
+  }, [messageApi]);
+
+  const handlePasswordChanged = useCallback((result: PasswordChangeResult) => {
+    setCred({
+      role:     result.role,
+      fullName: result.userName,
+      email:    result.userEmail,
+      password: result.newPassword,
+      action:   "password",
+    });
+    messageApi.success(`Contrasena actualizada para ${result.userName}`);
   }, [messageApi]);
 
   return (
@@ -520,6 +671,16 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
                   <Descriptions.Item label="Rol">
                     <Tag color="gold">Propietario</Tag>
                   </Descriptions.Item>
+                  <Descriptions.Item label="Contrasena">
+                    <ChangePasswordButton
+                      tenantId={tenantId}
+                      userId={owner.id}
+                      role="OWNER"
+                      fullName={owner.fullName}
+                      email={owner.email}
+                      onChanged={handlePasswordChanged}
+                    />
+                  </Descriptions.Item>
                 </Descriptions>
               ) : (
                 <Text type="secondary" style={{ fontSize: 12 }}>Sin propietario registrado.</Text>
@@ -535,6 +696,7 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
               tenantId={tenantId}
               branches={branches}
               onCreated={handleCreated}
+              onPasswordChanged={handlePasswordChanged}
             />
           </Col>
 
@@ -546,6 +708,7 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
               tenantId={tenantId}
               branches={branches}
               onCreated={handleCreated}
+              onPasswordChanged={handlePasswordChanged}
             />
           </Col>
 
@@ -557,6 +720,7 @@ export function BarberTenantTeam({ tenantId, owner, team: initialTeam, teamError
               tenantId={tenantId}
               branches={branches}
               onCreated={handleCreated}
+              onPasswordChanged={handlePasswordChanged}
             />
           </Col>
         </Row>

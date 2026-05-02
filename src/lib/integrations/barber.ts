@@ -319,6 +319,29 @@ export async function createBarberTenantUser(tenantId: number, data: CreateBarbe
   );
 }
 
+export type ResetBarberUserPasswordResult = {
+  userId:      number;
+  userEmail:   string;
+  userName:    string;
+  role:        "OWNER" | BarberTeamRole;
+  newPassword: string;
+};
+
+export async function resetBarberTenantUserPassword(
+  tenantId: number,
+  userId: number,
+  password?: string,
+) {
+  return fetchJson<ResetBarberUserPasswordResult>(
+    `${getBaseUrl()}/tenants/${tenantId}/users/${userId}/reset-password`,
+    {
+      method:  "POST",
+      headers: { ...getHeaders(), "Content-Type": "application/json" },
+      body:    password ? { password } : {},
+    },
+  );
+}
+
 export type BarberHealthDetail = {
   status: "ok" | "error";
   timestamp: string;
