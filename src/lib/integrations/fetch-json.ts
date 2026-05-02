@@ -17,7 +17,16 @@ export async function fetchJson<T>(url: string, options: RequestOptions = {}): P
   });
 
   const text = await response.text();
-  const payload = text ? (JSON.parse(text) as unknown) : null;
+  let payload: unknown = null;
+
+  if (text) {
+    try {
+      payload = JSON.parse(text) as unknown;
+    } catch {
+      const preview = text.replace(/\s+/g, " ").slice(0, 120);
+      throw new Error(`Respuesta invalida del servidor (${response.status}): ${preview}`);
+    }
+  }
 
   if (!response.ok) {
     const p = payload as Record<string, unknown> | null;
