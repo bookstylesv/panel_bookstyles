@@ -75,11 +75,11 @@ export async function getBarberTenant(id: number) {
 export type BarberModules = {
   pos:          boolean; // POS
   pos_turnos:   boolean; // Turnos de Caja
-  pos_dte:      boolean; // Documentos / Facturaci?n DTE
+  pos_dte:      boolean; // Documentos / Facturación DTE
   appointments: boolean; // Citas / Agenda
   billing:      boolean; // Caja de Citas / Agenda
   clients:      boolean; // Clientes
-  loyalty:      boolean; // Fidelizaci?n (Puntos y Tarjetas)
+  loyalty:      boolean; // Fidelización (Puntos y Tarjetas)
   barbers:      boolean; // Barberos / Estilistas
   services:     boolean; // Servicios / Tratamientos
   compras:      boolean; // Compras
@@ -90,7 +90,7 @@ export type BarberModules = {
   cxp:          boolean; // Cuentas por Pagar
   payroll:      boolean; // Planilla
   branches:     boolean; // Sucursales
-  settings:     boolean; // Configuraci?n del sistema
+  settings:     boolean; // Configuración del sistema
 };
 
 export type BarberPlanConfigItem = {

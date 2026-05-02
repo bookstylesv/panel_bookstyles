@@ -23,11 +23,11 @@ const SYSTEM_COLORS: Record<string, string> = {
 const MODULE_LABELS: Record<keyof BarberModules, string> = {
   pos:          "POS",
   pos_turnos:   "Turnos de Caja",
-  pos_dte:      "Documentos / Facturaci?n DTE",
+  pos_dte:      "Documentos / Facturación DTE",
   appointments: "Citas / Agenda",
   billing:      "Caja de Citas / Agenda",
   clients:      "Clientes",
-  loyalty:      "Fidelizaci?n (Puntos y Tarjetas)",
+  loyalty:      "Fidelización (Puntos y Tarjetas)",
   barbers:      "Barberos / Estilistas",
   services:     "Servicios / Tratamientos",
   compras:      "Compras",
@@ -38,7 +38,7 @@ const MODULE_LABELS: Record<keyof BarberModules, string> = {
   cxp:          "Cuentas por Pagar",
   payroll:      "Planilla",
   branches:     "Sucursales",
-  settings:     "Configuraci?n del sistema",
+  settings:     "Configuración del sistema",
 };
 
 const MODULE_KEYS = Object.keys(MODULE_LABELS) as (keyof BarberModules)[];
