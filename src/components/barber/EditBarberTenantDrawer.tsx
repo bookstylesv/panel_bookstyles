@@ -78,7 +78,10 @@ export function EditBarberTenantDrawer({
     setBranchesLoading(true);
     try {
       const res = await fetch(`/api/panel/barber/tenants/${tenant.id}/branches`);
-      if (res.ok) setBranches(await res.json());
+      if (res.ok) {
+        const json = await res.json() as { data?: BarberBranchItem[] };
+        if (Array.isArray(json.data)) setBranches(json.data);
+      }
     } catch {
       // silently ignore — branches tab will show empty
     } finally {

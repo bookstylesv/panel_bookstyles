@@ -1021,6 +1021,7 @@ button, input, textarea, select { font: inherit; }
 .control-dashboard .ant-table-cell-fix-left,
 .control-dashboard .ant-table-cell-fix-right {
   background: hsl(var(--bg-surface)) !important;
+  z-index: 2 !important;
 }
 
 .control-dashboard .ant-table-tbody > tr:hover .ant-table-cell-fix-left,
@@ -1031,6 +1032,12 @@ button, input, textarea, select { font: inherit; }
 .control-dashboard .ant-table-thead .ant-table-cell-fix-left,
 .control-dashboard .ant-table-thead .ant-table-cell-fix-right {
   background: hsl(var(--bg-subtle)) !important;
+  z-index: 4 !important;
+}
+
+/* Encabezado de tabla siempre por encima de celdas fijas al hacer scroll */
+.control-dashboard .ant-table-thead > tr > th {
+  z-index: 4 !important;
 }
 
 .control-dashboard .ant-pagination-item {

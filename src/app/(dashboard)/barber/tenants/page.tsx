@@ -7,7 +7,7 @@ import { BarberTenantsTable } from "@/components/barber/BarberTenantsTable";
 import { getErrorMessage } from "@/lib/error-message";
 import { getBarberTenants } from "@/lib/integrations/barber";
 
-const BARBER_APP_URL = (process.env.BARBER_PANEL_URL ?? "https://barber-pro-swart.vercel.app").replace(/\/$/, "");
+const BARBER_APP_URL = (process.env.BARBER_PANEL_URL ?? "https://barber-pro-bookstylesv.vercel.app").replace(/\/$/, "");
 
 async function loadBarberTenants(search: string, page: number, limit: number) {
   try {
