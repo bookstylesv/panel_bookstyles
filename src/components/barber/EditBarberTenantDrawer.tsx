@@ -111,9 +111,10 @@ export function EditBarberTenantDrawer({
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json() as { data?: unknown; error?: { message?: string } | string };
       if (!res.ok) {
-        messageApi.error(data?.error ?? "Error al guardar");
+        const errMsg = typeof data?.error === "string" ? data.error : data?.error?.message ?? "Error al guardar";
+        messageApi.error(errMsg);
         return;
       }
 

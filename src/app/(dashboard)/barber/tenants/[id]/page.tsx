@@ -11,7 +11,7 @@ import { BarberTenantActions } from "@/components/barber/BarberTenantActions";
 import { BarberTenantTeam }    from "@/components/barber/BarberTenantTeam";
 import { CopyButton } from "@/components/ui/CopyButton";
 
-const BARBER_APP_URL = (process.env.BARBER_PANEL_URL ?? "https://speeddan-barberia.vercel.app").replace(/\/$/, "");
+const BARBER_APP_URL = (process.env.BARBER_PANEL_URL ?? "https://barber-pro-bookstylesv.vercel.app").replace(/\/$/, "");
 
 function CompactStat({
   label,

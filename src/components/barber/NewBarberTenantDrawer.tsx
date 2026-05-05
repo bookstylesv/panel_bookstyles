@@ -99,14 +99,15 @@ export function NewBarberTenantDrawer({ barberAppUrl }: { barberAppUrl: string }
       const data = await res.json();
 
       if (!res.ok) {
-        messageApi.error(data?.error ?? "Error al crear la barbería");
+        const errMsg = typeof data?.error === "string" ? data.error : data?.error?.message ?? "Error al crear la barbería";
+        messageApi.error(errMsg);
         return;
       }
 
       setOpen(false);
       form.resetFields();
       setCredentials({
-        tenantId: data.data?.id ?? data.id,
+        tenantId: data.data?.id,
         slug: values.slug,
         ownerEmail: values.ownerEmail,
         ownerPassword: values.ownerPassword,

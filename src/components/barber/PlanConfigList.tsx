@@ -97,8 +97,8 @@ function PlanCard({ config: initial, onDeleted }: PlanCardProps) {
         body: JSON.stringify({ modules, maxBarbers, maxBranches }),
       });
       if (!res.ok) {
-        const data = await res.json() as { error?: string };
-        messageApi.error(data?.error ?? "Error al guardar");
+        const data = await res.json() as { error?: { message?: string } | string };
+        messageApi.error(typeof data?.error === "string" ? data.error : data?.error?.message ?? "Error al guardar");
         return;
       }
       messageApi.success(`Plan "${initial.displayName}" actualizado`);
@@ -113,9 +113,9 @@ function PlanCard({ config: initial, onDeleted }: PlanCardProps) {
     setDeleting(true);
     try {
       const res = await fetch(`/api/panel/barber/plans/${initial.slug}`, { method: "DELETE" });
-      const data = await res.json() as { error?: string };
+      const data = await res.json() as { error?: { message?: string } | string };
       if (!res.ok) {
-        messageApi.error(data?.error ?? "No se pudo eliminar");
+        messageApi.error(typeof data?.error === "string" ? data.error : data?.error?.message ?? "No se pudo eliminar");
         return;
       }
       messageApi.success(`Plan "${initial.displayName}" eliminado`);

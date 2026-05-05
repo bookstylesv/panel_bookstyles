@@ -77,8 +77,9 @@ export function BarberTenantsTable({
     try {
       const res = await fetch(`/api/panel/barber/tenants/${id}`, { method: "DELETE" });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        messageApi.error(data?.error ?? "Error al eliminar");
+        const data = await res.json().catch(() => ({})) as { error?: { message?: string } | string };
+        const msg = typeof data?.error === "string" ? data.error : data?.error?.message ?? "Error al eliminar";
+        messageApi.error(msg);
         return;
       }
       messageApi.success("Tenant eliminado");

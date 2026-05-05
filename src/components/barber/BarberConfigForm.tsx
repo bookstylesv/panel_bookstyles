@@ -33,8 +33,9 @@ export function BarberConfigForm({ initialConfig }: { initialConfig: BarberConfi
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        messageApi.error(data?.error ?? "Error al guardar");
+        const data = await res.json() as { error?: { message?: string } | string };
+        const errMsg = typeof data?.error === "string" ? data.error : data?.error?.message ?? "Error al guardar";
+        messageApi.error(errMsg);
         return;
       }
 
